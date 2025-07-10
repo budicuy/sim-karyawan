@@ -1,0 +1,103 @@
+# Instruksi Pengembangan Proyek Karyawan
+
+Dokumen ini mengacu pada standar **Laravel versi 12 terbaru (2025)**.
+Gunakan `php artisan` untuk membuat semua komponen seperti model, controller, migrasi, seeder, dll.
+
+## 1. Database
+
+### Skema Database
+
+1.  **Tabel `users`:**
+
+    -   `id` (Primary Key)
+    -   `name` (String)
+    -   `email` (String, Unique)
+    -   `password` (String)
+    -   `role` (Enum: 'admin', 'manager', 'user')
+    -   `timestamps`
+
+2.  **Tabel `karyawan`:**
+    -   `id` (Primary Key)
+    -   `user_id` (Foreign Key ke tabel `users`)
+    -   `tujuan` (String)
+    -   `tanggal` (Date)
+    -   `nopol` (String, Nomor Polisi)
+    -   `foto_tiket` (String, path ke file)
+    -   `timestamps`
+
+### Migrations
+
+Gunakan perintah `php artisan make:migration` untuk membuat atau memodifikasi tabel.
+
+```bash
+# Tambahkan kolom role ke tabel users
+php artisan make:migration add_role_to_users_table
+
+# Buat tabel karyawan
+php artisan make:migration create_karyawan_table
+```
+
+### Seeder
+
+Buat data awal untuk testing.
+
+```bash
+php artisan make:seeder UserSeeder
+php artisan make:seeder KaryawanSeeder
+```
+
+Panggil seeder ini dari `DatabaseSeeder.php`.
+
+## 2. Autentikasi
+
+-   Buatkan halaman **Login** dan **Register**.
+-   Login menggunakan `email` dan `password`.
+-   Setelah login berhasil, pengguna diarahkan ke halaman `/dashboard`.
+-   Gunakan `Laravel Breeze` atau buat secara manual.
+
+## 3. Otorisasi (Roles & Permissions)
+
+Terapkan middleware atau policies untuk membatasi akses berdasarkan peran pengguna.
+
+-   **Admin:**
+    -   CRUD penuh untuk data Karyawan (`App\Models\Karyawan`).
+    -   CRUD penuh untuk data User (`App\Models\User`), termasuk mengubah role.
+-   **Manager:**
+    -   CRUD penuh untuk semua data Karyawan.
+    -   Tidak bisa mengelola data User.
+-   **User:**
+    -   Hanya bisa melakukan CRUD pada data Karyawan miliknya sendiri.
+
+## 4. Fitur CRUD
+
+Gunakan _resource controller_ untuk mempercepat pembuatan endpoint CRUD.
+
+```bash
+php artisan make:controller KaryawanController --resource --model=Karyawan
+php artisan make:controller UserController --resource --model=User
+```
+
+Gunakan _Form Request_ untuk validasi data yang masuk.
+
+```bash
+php artisan make:request StoreKaryawanRequest
+php artisan make:request UpdateKaryawanRequest
+```
+
+## 5. Tampilan (Views)
+
+-   Buat tampilan Blade sederhana **tanpa CSS dan styling**.
+-   Struktur file view bisa diatur dalam direktori `resources/views/`.
+    -   `auth/login.blade.php`
+    -   `auth/register.blade.php`
+    -   `dashboard.blade.php`
+    -   `karyawan/index.blade.php`
+    -   `karyawan/create.blade.php`
+    -   `karyawan/edit.blade.php`
+    -   `users/index.blade.php`
+    -   `users/create.blade.php`
+    -   `users/edit.blade.php`
+
+---
+
+_Catatan: Untuk referensi lebih lanjut, kunjungi dokumentasi resmi Laravel: [https://laravel.com/docs/12.x](https://laravel.com/docs/12.x)_
