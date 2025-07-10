@@ -72,6 +72,11 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- Pagination -->
+            <div class="mt-6">
+                {{ $users->links() }}
+            </div>
         </div>
     </x-admin-layout>
 </body>

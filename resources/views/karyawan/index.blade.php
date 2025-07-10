@@ -69,6 +69,11 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- Pagination -->
+            <div class="mt-6">
+                {{ $karyawans->links() }}
+            </div>
         </div>
     </x-admin-layout>
 </body>

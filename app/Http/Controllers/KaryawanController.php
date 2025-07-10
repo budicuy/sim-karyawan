@@ -18,9 +18,16 @@ class KaryawanController extends Controller
     public function index()
     {
         if (Gate::allows('admin') || Auth::user()->role == 'manager') {
-            $karyawans = Karyawan::with('user')->get();
+            $karyawans = Karyawan::with('user')
+                ->select('id', 'user_id', 'tujuan', 'tanggal', 'nopol', 'created_at')
+                ->latest()
+                ->paginate(10);
         } else {
-            $karyawans = Karyawan::where('user_id', Auth::id())->with('user')->get();
+            $karyawans = Karyawan::where('user_id', Auth::id())
+                ->with('user')
+                ->select('id', 'user_id', 'tujuan', 'tanggal', 'nopol', 'created_at')
+                ->latest()
+                ->paginate(10);
         }
 
         return view('karyawan.index', compact('karyawans'));

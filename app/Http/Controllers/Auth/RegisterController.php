@@ -36,10 +36,13 @@ class RegisterController extends Controller
             'role' => 'user', // Default role untuk user baru
         ]);
 
-        event(new Registered($user));
+        // Hanya trigger event jika diperlukan
+        if (config('app.env') === 'production') {
+            event(new Registered($user));
+        }
 
         Auth::login($user);
 
-        return redirect('/dashboard');
+        return redirect('/dashboard')->with('success', 'Akun berhasil dibuat!');
     }
 }
