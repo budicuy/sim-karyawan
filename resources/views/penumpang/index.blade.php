@@ -9,7 +9,7 @@
 
 <body class="bg-gray-100">
     <x-admin-layout>
-        <x-slot:title>Data Penumpang</x-slot:title>
+        <x-slot:title>Data Manifes Penumpang</x-slot:title>
 
         @if (session('success'))
             <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
@@ -23,58 +23,65 @@
             </div>
         @endif
 
-        <div class="bg-white rounded-lg shadow p-6">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-xl font-bold text-gray-800">Data Manifes Penumpang</h2>
-                <div class="flex space-x-2">
+        <div class="bg-white rounded-lg shadow p-4 md:p-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                <h2 class="text-lg md:text-xl font-bold text-gray-800">Data Manifes Penumpang</h2>
+                <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
                     <a href="{{ route('penumpang.export', ['format' => 'csv']) }}"
-                        class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition">
+                        class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition text-center text-sm">
                         Export CSV
                     </a>
                     <a href="{{ route('penumpang.create') }}"
-                        class="bg-blue-800 text-white px-4 py-2 rounded-md hover:bg-blue-900 transition">
+                        class="bg-blue-800 text-white px-4 py-2 rounded-md hover:bg-blue-900 transition text-center text-sm">
                         Tambah Penumpang
                     </a>
                 </div>
             </div>
 
             <!-- Filters -->
-            <div class="bg-gray-50 p-4 rounded-lg mb-6">
-                <form method="GET" action="{{ route('penumpang.index') }}" class="flex flex-wrap gap-4">
-                    <div class="flex-1 min-w-48">
+            <div class="bg-gray-50 p-3 md:p-4 rounded-lg mb-6">
+                <form method="GET" action="{{ route('penumpang.index') }}" class="space-y-4">
+                    <!-- Search Field -->
+                    <div class="w-full">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Pencarian</label>
                         <input type="text" name="search" value="{{ request('search') }}"
                             placeholder="Cari nama, tujuan, nopol, nomor tiket..."
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
-                    <div class="min-w-32">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                        <select name="status"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="">Semua</option>
-                            <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>Open</option>
-                            <option value="0" {{ request('status') == '0' ? 'selected' : '' }}>Close</option>
-                        </select>
-                    </div>
-                    <div class="min-w-32">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Dari Tanggal</label>
-                        <input type="date" name="date_from" value="{{ request('date_from') }}"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-                    <div class="min-w-32">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Sampai Tanggal</label>
-                        <input type="date" name="date_to" value="{{ request('date_to') }}"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-                    <div class="flex items-end space-x-2">
-                        <button type="submit"
-                            class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition">
-                            Filter
-                        </button>
-                        <a href="{{ route('penumpang.index') }}"
-                            class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition">
-                            Reset
-                        </a>
+
+                    <!-- Filter Row -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                            <select name="status"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Semua</option>
+                                <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>Open</option>
+                                <option value="0" {{ request('status') == '0' ? 'selected' : '' }}>Close</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Dari Tanggal</label>
+                            <input type="date" name="date_from" value="{{ request('date_from') }}"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Sampai Tanggal</label>
+                            <input type="date" name="date_to" value="{{ request('date_to') }}"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="flex items-end">
+                            <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full">
+                                <button type="submit"
+                                    class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition text-sm">
+                                    Filter
+                                </button>
+                                <a href="{{ route('penumpang.index') }}"
+                                    class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition text-center text-sm">
+                                    Reset
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -82,18 +89,18 @@
             <!-- Bulk Actions -->
             @canany(['admin', 'manager'])
                 <div x-data="{ showBulkActions: false, selectedItems: [] }" class="mb-4">
-                    <div x-show="selectedItems.length > 0" class="bg-blue-50 p-4 rounded-lg">
-                        <div class="flex items-center justify-between">
+                    <div x-show="selectedItems.length > 0" class="bg-blue-50 p-3 md:p-4 rounded-lg">
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                             <span class="text-sm text-gray-700">
                                 <span x-text="selectedItems.length"></span> item dipilih
                             </span>
-                            <div class="flex space-x-2">
+                            <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
                                 <button @click="bulkUpdateStatus(true)"
-                                    class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700">
+                                    class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 text-center">
                                     Set Open
                                 </button>
                                 <button @click="bulkUpdateStatus(false)"
-                                    class="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700">
+                                    class="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700 text-center">
                                     Set Close
                                 </button>
                             </div>
@@ -102,7 +109,8 @@
                 </div>
             @endcanany
 
-            <div class="overflow-x-scroll">
+            <!-- Desktop Table View -->
+            <div class="hidden lg:block overflow-x-auto">
                 <table class="min-w-full bg-white">
                     <thead class="bg-blue-800 text-white">
                         <tr>
@@ -121,7 +129,7 @@
                             <th class="py-3 px-4 text-left">Jenis Kendaraan</th>
                             <th class="py-3 px-4 text-left">Nomor Tiket</th>
                             <th class="py-3 px-4 text-left">Status</th>
-                            <th class="py-3 px-4 text-left">Aksi</th>
+                            <th class="py-3 px-4 text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="text-gray-700">
@@ -149,12 +157,16 @@
                                     </span>
                                 </td>
                                 <td class="py-3 px-4 border-b">
-                                    <div class="flex space-x-1">
-                                        <a href="{{ route('penumpang.show', $penumpang) }}"
-                                            class="text-blue-500 hover:underline text-sm">Lihat</a>
+                                    <div class="flex space-x-3">
+                                        <button>
+                                            <a href="{{ route('penumpang.show', $penumpang) }}"
+                                                class="text-blue-500 hover:underline text-sm">Lihat</a>
+                                        </button>
                                         @can('update', $penumpang)
-                                            <a href="{{ route('penumpang.edit', $penumpang) }}"
-                                                class="text-yellow-500 hover:underline text-sm">Edit</a>
+                                            <button>
+                                                <a href="{{ route('penumpang.edit', $penumpang) }}"
+                                                    class="text-yellow-500 hover:underline text-sm">Edit</a>
+                                            </button>
                                         @endcan
                                         @can('delete', $penumpang)
                                             <form method="POST" action="{{ route('penumpang.destroy', $penumpang) }}"
@@ -171,6 +183,80 @@
                         @endforeach
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Mobile/Tablet Card View -->
+            <div class="lg:hidden space-y-4">
+                @foreach ($penumpangs as $penumpang)
+                    <div class="bg-white border rounded-lg p-4 shadow-sm">
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="flex items-center space-x-3">
+                                @canany(['admin', 'manager'])
+                                    <input type="checkbox" value="{{ $penumpang->id }}"
+                                        @change="toggleItem({{ $penumpang->id }})"
+                                        class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                @endcanany
+                                <h3 class="font-semibold text-gray-800">{{ $penumpang->user->name }}</h3>
+                            </div>
+                            <span
+                                class="px-2 py-1 text-xs rounded-full {{ $penumpang->status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                {{ $penumpang->status_label }}
+                            </span>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 text-sm text-gray-600 mb-4">
+                            <div>
+                                <span class="font-medium">Usia:</span>
+                                <span class="text-gray-800">{{ $penumpang->usia }} tahun</span>
+                            </div>
+                            <div>
+                                <span class="font-medium">Jenis Kelamin:</span>
+                                <span class="text-gray-800">{{ $penumpang->jenis_kelamin_label }}</span>
+                            </div>
+                            <div>
+                                <span class="font-medium">Tujuan:</span>
+                                <span class="text-gray-800">{{ $penumpang->tujuan }}</span>
+                            </div>
+                            <div>
+                                <span class="font-medium">Tanggal:</span>
+                                <span class="text-gray-800">{{ $penumpang->tanggal->format('d/m/Y') }}</span>
+                            </div>
+                            <div>
+                                <span class="font-medium">Nopol:</span>
+                                <span class="text-gray-800">{{ $penumpang->nopol }}</span>
+                            </div>
+                            <div>
+                                <span class="font-medium">Kendaraan:</span>
+                                <span class="text-gray-800">{{ $penumpang->jenis_kendaraan }}</span>
+                            </div>
+                            <div class="col-span-2">
+                                <span class="font-medium">Nomor Tiket:</span>
+                                <span class="text-gray-800">{{ $penumpang->nomor_tiket }}</span>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-nowrap items-center  gap-4 pt-3 border-t">
+                            <button>
+                                <a href="{{ route('penumpang.show', $penumpang) }}"
+                                    class="text-blue-500 hover:underline text-sm">Lihat</a>
+                            </button>
+                            @can('update', $penumpang)
+                                <button>
+                                    <a href="{{ route('penumpang.edit', $penumpang) }}"
+                                        class="text-yellow-500 hover:underline text-sm">Edit</a>
+                                </button>
+                            @endcan
+                            @can('delete', $penumpang)
+                                <form method="POST" action="{{ route('penumpang.destroy', $penumpang) }}"
+                                    class="inline" onsubmit="return confirm('Yakin ingin menghapus?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-500 hover:underline text-sm">Hapus</button>
+                                </form>
+                            @endcan
+                        </div>
+                    </div>
+                @endforeach
             </div>
 
             <!-- Pagination -->
