@@ -83,48 +83,51 @@
             </div>
         </div>
 
-        <!-- Recent Data -->
-        <div class="bg-white rounded-lg shadow p-6 mb-6">
-            <h2 class="text-xl font-bold mb-4 text-gray-800">Data Karyawan Terbaru</h2>
-            <div class="overflow-x-auto">
-                <table class="min-w-full bg-white">
-                    <thead class="bg-blue-800 text-white">
-                        <tr>
-                            <th class="py-3 px-4 text-left">Nama</th>
-                            <th class="py-3 px-4 text-left">Tujuan</th>
-                            <th class="py-3 px-4 text-left">Tanggal</th>
-                            <th class="py-3 px-4 text-left">Nopol</th>
-                            <th class="py-3 px-4 text-left">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-gray-700">
-                        @foreach (\App\Models\Karyawan::with('user')->latest()->take(5)->get() as $karyawan)
-                            <tr class="hover:bg-gray-50">
-                                <td class="py-3 px-4 border-b">{{ $karyawan->user->name }}</td>
-                                <td class="py-3 px-4 border-b">{{ $karyawan->tujuan }}</td>
-                                <td class="py-3 px-4 border-b">{{ $karyawan->tanggal }}</td>
-                                <td class="py-3 px-4 border-b">{{ $karyawan->nopol }}</td>
-                                <td class="py-3 px-4 border-b">
-                                    <a href="{{ route('karyawan.edit', $karyawan) }}"
-                                        class="text-blue-500 hover:underline mr-2">Edit</a>
-                                </td>
+
+        <!-- Recent Data hanya admin dam manager -->
+        @canany('admin', 'manager')
+            <div class="bg-white rounded-lg shadow p-6 mb-6">
+                <h2 class="text-xl font-bold mb-4 text-gray-800">Data Karyawan Terbaru</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white">
+                        <thead class="bg-blue-800 text-white">
+                            <tr>
+                                <th class="py-3 px-4 text-left">Nama</th>
+                                <th class="py-3 px-4 text-left">Tujuan</th>
+                                <th class="py-3 px-4 text-left">Tanggal</th>
+                                <th class="py-3 px-4 text-left">Nopol</th>
+                                <th class="py-3 px-4 text-left">Aksi</th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-                <div class="mt-4">
-                    <a href="{{ route('karyawan.index') }}" class="text-blue-500 hover:underline flex items-center">
-                        Lihat Semua
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20"
-                            fill="currentColor">
-                            <path fill-rule="evenodd"
-                                d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
-                                clip-rule="evenodd" />
-                        </svg>
-                    </a>
+                        </thead>
+                        <tbody class="text-gray-700">
+                            @foreach (\App\Models\Karyawan::with('user')->latest()->take(5)->get() as $karyawan)
+                                <tr class="hover:bg-gray-50">
+                                    <td class="py-3 px-4 border-b">{{ $karyawan->user->name }}</td>
+                                    <td class="py-3 px-4 border-b">{{ $karyawan->tujuan }}</td>
+                                    <td class="py-3 px-4 border-b">{{ $karyawan->tanggal }}</td>
+                                    <td class="py-3 px-4 border-b">{{ $karyawan->nopol }}</td>
+                                    <td class="py-3 px-4 border-b">
+                                        <a href="{{ route('karyawan.edit', $karyawan) }}"
+                                            class="text-blue-500 hover:underline mr-2">Edit</a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                    <div class="mt-4">
+                        <a href="{{ route('karyawan.index') }}" class="text-blue-500 hover:underline flex items-center">
+                            Lihat Semua
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
+        @endcanany
 
         <!-- System Overview -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
