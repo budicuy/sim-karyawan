@@ -2,14 +2,14 @@
 
 namespace App\Providers;
 
-use App\Models\Karyawan;
-use App\Policies\KaryawanPolicy;
+use App\Models\Penumpang;
+use App\Policies\PenumpangPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use App\Models\User;
 use Illuminate\Support\Facades\URL;
 use App\Observers\UserObserver;
-use App\Observers\KaryawanObserver;
+use App\Observers\PenumpangObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,7 +19,7 @@ class AppServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-        Karyawan::class => KaryawanPolicy::class,
+        Penumpang::class => PenumpangPolicy::class,
     ];
 
     /**
@@ -41,7 +41,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Register observers
         User::observe(UserObserver::class);
-        Karyawan::observe(KaryawanObserver::class);
+        Penumpang::observe(PenumpangObserver::class);
 
         Gate::define('admin', function (User $user) {
             return $user->role === 'admin';

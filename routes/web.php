@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\KaryawanController;
+use App\Http\Controllers\PenumpangController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
 
@@ -26,9 +26,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/stats', [DashboardController::class, 'stats'])->name('dashboard.stats');
     Route::post('/dashboard/clear-cache', [DashboardController::class, 'clearCache'])->name('dashboard.clear-cache');
 
-    // Resourceful routes for Karyawan and User
-    Route::resource('karyawan', KaryawanController::class);
+    // Resourceful routes for Penumpang and User
+    Route::resource('penumpang', PenumpangController::class);
     Route::resource('users', UserController::class)->middleware('can:admin');
+
+    // Additional penumpang routes
+    Route::patch('penumpang/{penumpang}/status', [PenumpangController::class, 'updateStatus'])->name('penumpang.update-status');
+    Route::get('penumpang-stats', [PenumpangController::class, 'stats'])->name('penumpang.stats');
+    Route::get('penumpang-recent', [PenumpangController::class, 'recent'])->name('penumpang.recent');
+    Route::patch('penumpang/bulk-update-status', [PenumpangController::class, 'bulkUpdateStatus'])->name('penumpang.bulk-update-status');
+    Route::get('penumpang-export', [PenumpangController::class, 'export'])->name('penumpang.export');
 
     // Additional user routes for optimized operations
     Route::middleware('can:admin')->group(function () {

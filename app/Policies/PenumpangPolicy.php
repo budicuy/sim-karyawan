@@ -2,11 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\Karyawan;
+use App\Models\Penumpang;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class KaryawanPolicy
+class PenumpangPolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -19,9 +19,11 @@ class KaryawanPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Karyawan $karyawan): bool
+    public function view(User $user, Penumpang $penumpang): bool
     {
-        return $user->role === 'admin' || $user->role === 'manager' || $user->id === $karyawan->user_id;
+        return $user->role === 'admin' ||
+            $user->role === 'manager' ||
+            $user->id === $penumpang->user_id;
     }
 
     /**
@@ -35,31 +37,36 @@ class KaryawanPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Karyawan $karyawan): bool
+    public function update(User $user, Penumpang $penumpang): bool
     {
-        return $user->role === 'admin' || $user->role === 'manager' || $user->id === $karyawan->user_id;
+        return $user->role === 'admin' ||
+            $user->role === 'manager' ||
+            $user->id === $penumpang->user_id;
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Karyawan $karyawan): bool
+    public function delete(User $user, Penumpang $penumpang): bool
     {
-        return $user->role === 'admin' || $user->role === 'manager' || $user->id === $karyawan->user_id;
+        return $user->role === 'admin' ||
+            $user->role === 'manager' ||
+            $user->id === $penumpang->user_id;
     }
 
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, Karyawan $karyawan): bool
+    public function restore(User $user, Penumpang $penumpang): bool
     {
-        return $user->role === 'admin' || $user->role === 'manager';
+        return $user->role === 'admin' ||
+            $user->role === 'manager';
     }
 
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Karyawan $karyawan): bool
+    public function forceDelete(User $user, Penumpang $penumpang): bool
     {
         return $user->role === 'admin';
     }

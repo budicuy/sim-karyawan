@@ -2,17 +2,18 @@
 
 namespace App\Observers;
 
-use App\Models\Karyawan;
+use App\Models\Penumpang;
 use Illuminate\Support\Facades\Cache;
 
-class KaryawanObserver
+class PenumpangObserver
 {
     /**
      * Cache keys yang perlu dihapus
      */
     private const CACHE_KEYS = [
         'dashboard_stats',
-        'recent_karyawan',
+        'penumpang_stats',
+        'recent_penumpang',
     ];
 
     /**
@@ -26,41 +27,41 @@ class KaryawanObserver
     }
 
     /**
-     * Handle the Karyawan "created" event.
+     * Handle the Penumpang "created" event.
      */
-    public function created(Karyawan $karyawan): void
+    public function created(Penumpang $penumpang): void
     {
         $this->clearCaches();
     }
 
     /**
-     * Handle the Karyawan "updated" event.
+     * Handle the Penumpang "updated" event.
      */
-    public function updated(Karyawan $karyawan): void
+    public function updated(Penumpang $penumpang): void
     {
         $this->clearCaches();
     }
 
     /**
-     * Handle the Karyawan "deleted" event.
+     * Handle the Penumpang "deleted" event.
      */
-    public function deleted(Karyawan $karyawan): void
+    public function deleted(Penumpang $penumpang): void
     {
         $this->clearCaches();
     }
 
     /**
-     * Handle the Karyawan "restored" event.
+     * Handle the Penumpang "restored" event.
      */
-    public function restored(Karyawan $karyawan): void
+    public function restored(Penumpang $penumpang): void
     {
         $this->clearCaches();
     }
 
     /**
-     * Handle the Karyawan "force deleted" event.
+     * Handle the Penumpang "force deleted" event.
      */
-    public function forceDeleted(Karyawan $karyawan): void
+    public function forceDeleted(Penumpang $penumpang): void
     {
         $this->clearCaches();
     }

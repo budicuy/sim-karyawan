@@ -67,10 +67,10 @@ class User extends Authenticatable
     }
 
     /**
-     * Get karyawan yang terkait dengan user
+     * Get penumpang yang terkait dengan user
      */
-    public function karyawan()
+    public function penumpang()
     {
-        return $this->hasMany(Karyawan::class);
+        return $this->hasMany(Penumpang::class);
     }
 }

@@ -14,8 +14,8 @@
             <div class="bg-white rounded-lg shadow p-5 border-l-4 border-blue-500">
                 <div class="flex justify-between">
                     <div>
-                        <h3 class="text-gray-500 text-sm">Total Karyawan</h3>
-                        <p class="text-3xl font-bold text-gray-800">{{ $stats['total_karyawan'] }}</p>
+                        <h3 class="text-gray-500 text-sm">Total Penumpang</h3>
+                        <p class="text-3xl font-bold text-gray-800">{{ $stats['total_penumpang'] }}</p>
                     </div>
                     <div class="bg-blue-500 rounded-full h-12 w-12 flex items-center justify-center text-white">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
@@ -31,48 +31,48 @@
             <div class="bg-white rounded-lg shadow p-5 border-l-4 border-green-500">
                 <div class="flex justify-between">
                     <div>
-                        <h3 class="text-gray-500 text-sm">Total User</h3>
-                        <p class="text-3xl font-bold text-gray-800">{{ $stats['total_users'] }}</p>
+                        <h3 class="text-gray-500 text-sm">Status Open</h3>
+                        <p class="text-3xl font-bold text-gray-800">{{ $stats['open_status'] }}</p>
                     </div>
                     <div class="bg-green-500 rounded-full h-12 w-12 flex items-center justify-center text-white">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                     </div>
                 </div>
             </div>
 
             <!-- Stats Card 3 -->
-            <div class="bg-white rounded-lg shadow p-5 border-l-4 border-yellow-500">
+            <div class="bg-white rounded-lg shadow p-5 border-l-4 border-red-500">
                 <div class="flex justify-between">
                     <div>
-                        <h3 class="text-gray-500 text-sm">Admin</h3>
-                        <p class="text-3xl font-bold text-gray-800">{{ $stats['admin_count'] }}</p>
+                        <h3 class="text-gray-500 text-sm">Status Close</h3>
+                        <p class="text-3xl font-bold text-gray-800">{{ $stats['close_status'] }}</p>
                     </div>
-                    <div class="bg-yellow-500 rounded-full h-12 w-12 flex items-center justify-center text-white">
+                    <div class="bg-red-500 rounded-full h-12 w-12 flex items-center justify-center text-white">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                     </div>
                 </div>
             </div>
 
             <!-- Stats Card 4 -->
-            <div class="bg-white rounded-lg shadow p-5 border-l-4 border-red-500">
+            <div class="bg-white rounded-lg shadow p-5 border-l-4 border-purple-500">
                 <div class="flex justify-between">
                     <div>
-                        <h3 class="text-gray-500 text-sm">Manager</h3>
-                        <p class="text-3xl font-bold text-gray-800">{{ $stats['manager_count'] }}</p>
+                        <h3 class="text-gray-500 text-sm">Total User</h3>
+                        <p class="text-3xl font-bold text-gray-800">{{ $stats['total_users'] }}</p>
                     </div>
-                    <div class="bg-red-500 rounded-full h-12 w-12 flex items-center justify-center text-white">
+                    <div class="bg-purple-500 rounded-full h-12 w-12 flex items-center justify-center text-white">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                         </svg>
                     </div>
                 </div>
@@ -83,7 +83,7 @@
         <!-- Recent Data hanya admin dam manager -->
         @canany('admin', 'manager')
             <div class="bg-white rounded-lg shadow p-6 mb-6">
-                <h2 class="text-xl font-bold mb-4 text-gray-800">Data Karyawan Terbaru</h2>
+                <h2 class="text-xl font-bold mb-4 text-gray-800">Data Penumpang Terbaru</h2>
                 <div class="overflow-x-auto">
                     <table class="min-w-full bg-white">
                         <thead class="bg-blue-800 text-white">
@@ -92,18 +92,27 @@
                                 <th class="py-3 px-4 text-left">Tujuan</th>
                                 <th class="py-3 px-4 text-left">Tanggal</th>
                                 <th class="py-3 px-4 text-left">Nopol</th>
+                                <th class="py-3 px-4 text-left">Jenis Kendaraan</th>
+                                <th class="py-3 px-4 text-left">Status</th>
                                 <th class="py-3 px-4 text-left">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="text-gray-700">
-                            @foreach ($recentKaryawan as $karyawan)
+                            @foreach ($recentPenumpang as $penumpang)
                                 <tr class="hover:bg-gray-50">
-                                    <td class="py-3 px-4 border-b">{{ $karyawan->user->name }}</td>
-                                    <td class="py-3 px-4 border-b">{{ $karyawan->tujuan }}</td>
-                                    <td class="py-3 px-4 border-b">{{ $karyawan->tanggal }}</td>
-                                    <td class="py-3 px-4 border-b">{{ $karyawan->nopol }}</td>
+                                    <td class="py-3 px-4 border-b">{{ $penumpang->user->name }}</td>
+                                    <td class="py-3 px-4 border-b">{{ $penumpang->tujuan }}</td>
+                                    <td class="py-3 px-4 border-b">{{ $penumpang->tanggal->format('d/m/Y') }}</td>
+                                    <td class="py-3 px-4 border-b">{{ $penumpang->nopol }}</td>
+                                    <td class="py-3 px-4 border-b">{{ $penumpang->jenis_kendaraan }}</td>
                                     <td class="py-3 px-4 border-b">
-                                        <a href="{{ route('karyawan.edit', $karyawan) }}"
+                                        <span
+                                            class="px-2 py-1 text-xs rounded-full {{ $penumpang->status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                            {{ $penumpang->status_label }}
+                                        </span>
+                                    </td>
+                                    <td class="py-3 px-4 border-b">
+                                        <a href="{{ route('penumpang.edit', $penumpang) }}"
                                             class="text-blue-500 hover:underline mr-2">Edit</a>
                                     </td>
                                 </tr>
@@ -111,7 +120,7 @@
                         </tbody>
                     </table>
                     <div class="mt-4">
-                        <a href="{{ route('karyawan.index') }}" class="text-blue-500 hover:underline flex items-center">
+                        <a href="{{ route('penumpang.index') }}" class="text-blue-500 hover:underline flex items-center">
                             Lihat Semua
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20"
                                 fill="currentColor">
@@ -162,9 +171,9 @@
             <div class="bg-white rounded-lg shadow p-6">
                 <h2 class="text-xl font-bold mb-4 text-gray-800">Aksi Cepat</h2>
                 <div class="space-y-3">
-                    <a href="{{ route('karyawan.create') }}"
+                    <a href="{{ route('penumpang.create') }}"
                         class="block w-full bg-blue-800 text-white py-2 px-4 rounded hover:bg-blue-900 transition text-center">
-                        Tambah Data Karyawan
+                        Tambah Data Penumpang
                     </a>
                     @can('admin')
                         <a href="{{ route('users.create') }}"
@@ -172,9 +181,9 @@
                             Tambah User Baru
                         </a>
                     @endcan
-                    <a href="{{ route('karyawan.index') }}"
+                    <a href="{{ route('penumpang.index') }}"
                         class="block w-full bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700 transition text-center">
-                        Lihat Semua Data Karyawan
+                        Lihat Semua Data Penumpang
                     </a>
                 </div>
             </div>

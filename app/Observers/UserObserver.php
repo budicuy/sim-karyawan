@@ -13,7 +13,8 @@ class UserObserver
     private const CACHE_KEYS = [
         'dashboard_stats',
         'user_stats',
-        'recent_karyawan',
+        'recent_penumpang',
+        'penumpang_stats',
     ];
 
     /**
