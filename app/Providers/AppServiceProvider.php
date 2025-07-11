@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use App\Models\User;
 use Illuminate\Support\Facades\URL;
+use App\Observers\UserObserver;
+use App\Observers\KaryawanObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -36,6 +38,10 @@ class AppServiceProvider extends ServiceProvider
         if (config('app.env') === 'production') {
             URL::forceScheme('https');
         }
+
+        // Register observers
+        User::observe(UserObserver::class);
+        Karyawan::observe(KaryawanObserver::class);
 
         Gate::define('admin', function (User $user) {
             return $user->role === 'admin';

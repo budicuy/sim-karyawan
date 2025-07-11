@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -21,11 +22,19 @@ Route::post('register', [RegisterController::class, 'register']);
 
 // Dashboard
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/stats', [DashboardController::class, 'stats'])->name('dashboard.stats');
+    Route::post('/dashboard/clear-cache', [DashboardController::class, 'clearCache'])->name('dashboard.clear-cache');
 
     // Resourceful routes for Karyawan and User
     Route::resource('karyawan', KaryawanController::class);
     Route::resource('users', UserController::class)->middleware('can:admin');
+
+    // Additional user routes for optimized operations
+    Route::middleware('can:admin')->group(function () {
+        Route::delete('users/bulk-destroy', [UserController::class, 'bulkDestroy'])->name('users.bulk-destroy');
+        Route::patch('users/bulk-update-role', [UserController::class, 'bulkUpdateRole'])->name('users.bulk-update-role');
+        Route::get('users/stats', [UserController::class, 'stats'])->name('users.stats');
+        Route::get('users/export', [UserController::class, 'export'])->name('users.export');
+    });
 });

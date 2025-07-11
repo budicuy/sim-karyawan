@@ -15,7 +15,7 @@
                 <div class="flex justify-between">
                     <div>
                         <h3 class="text-gray-500 text-sm">Total Karyawan</h3>
-                        <p class="text-3xl font-bold text-gray-800">{{ \App\Models\Karyawan::count() }}</p>
+                        <p class="text-3xl font-bold text-gray-800">{{ $stats['total_karyawan'] }}</p>
                     </div>
                     <div class="bg-blue-500 rounded-full h-12 w-12 flex items-center justify-center text-white">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
@@ -32,7 +32,7 @@
                 <div class="flex justify-between">
                     <div>
                         <h3 class="text-gray-500 text-sm">Total User</h3>
-                        <p class="text-3xl font-bold text-gray-800">{{ \App\Models\User::count() }}</p>
+                        <p class="text-3xl font-bold text-gray-800">{{ $stats['total_users'] }}</p>
                     </div>
                     <div class="bg-green-500 rounded-full h-12 w-12 flex items-center justify-center text-white">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
@@ -49,9 +49,7 @@
                 <div class="flex justify-between">
                     <div>
                         <h3 class="text-gray-500 text-sm">Admin</h3>
-                        <p class="text-3xl font-bold text-gray-800">
-                            {{ \App\Models\User::where('role', 'admin')->count() }}
-                        </p>
+                        <p class="text-3xl font-bold text-gray-800">{{ $stats['admin_count'] }}</p>
                     </div>
                     <div class="bg-yellow-500 rounded-full h-12 w-12 flex items-center justify-center text-white">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
@@ -68,9 +66,7 @@
                 <div class="flex justify-between">
                     <div>
                         <h3 class="text-gray-500 text-sm">Manager</h3>
-                        <p class="text-3xl font-bold text-gray-800">
-                            {{ \App\Models\User::where('role', 'manager')->count() }}
-                        </p>
+                        <p class="text-3xl font-bold text-gray-800">{{ $stats['manager_count'] }}</p>
                     </div>
                     <div class="bg-red-500 rounded-full h-12 w-12 flex items-center justify-center text-white">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
@@ -100,7 +96,7 @@
                             </tr>
                         </thead>
                         <tbody class="text-gray-700">
-                            @foreach (\App\Models\Karyawan::with('user')->latest()->take(5)->get() as $karyawan)
+                            @foreach ($recentKaryawan as $karyawan)
                                 <tr class="hover:bg-gray-50">
                                     <td class="py-3 px-4 border-b">{{ $karyawan->user->name }}</td>
                                     <td class="py-3 px-4 border-b">{{ $karyawan->tujuan }}</td>
@@ -137,35 +133,27 @@
                 <div class="space-y-3">
                     <div class="flex items-center justify-between">
                         <span class="text-gray-600">Admin</span>
-                        <span
-                            class="text-blue-800 font-semibold">{{ \App\Models\User::where('role', 'admin')->count() }}</span>
+                        <span class="text-blue-800 font-semibold">{{ $stats['admin_count'] }}</span>
                     </div>
                     <div class="w-full bg-gray-200 rounded-full h-2.5">
-                        <div class="bg-blue-800 h-2.5 rounded-full"
-                            style="width: {{ (\App\Models\User::where('role', 'admin')->count() / \App\Models\User::count()) * 100 }}%">
-                        </div>
+                        <div class="bg-blue-800 h-2.5 rounded-full" style="width: {{ $percentages['admin'] }}%"></div>
                     </div>
 
                     <div class="flex items-center justify-between">
                         <span class="text-gray-600">Manager</span>
-                        <span
-                            class="text-blue-800 font-semibold">{{ \App\Models\User::where('role', 'manager')->count() }}</span>
+                        <span class="text-blue-800 font-semibold">{{ $stats['manager_count'] }}</span>
                     </div>
                     <div class="w-full bg-gray-200 rounded-full h-2.5">
-                        <div class="bg-blue-800 h-2.5 rounded-full"
-                            style="width: {{ (\App\Models\User::where('role', 'manager')->count() / \App\Models\User::count()) * 100 }}%">
+                        <div class="bg-blue-800 h-2.5 rounded-full" style="width: {{ $percentages['manager'] }}%">
                         </div>
                     </div>
 
                     <div class="flex items-center justify-between">
                         <span class="text-gray-600">User</span>
-                        <span
-                            class="text-blue-800 font-semibold">{{ \App\Models\User::where('role', 'user')->count() }}</span>
+                        <span class="text-blue-800 font-semibold">{{ $stats['user_count'] }}</span>
                     </div>
                     <div class="w-full bg-gray-200 rounded-full h-2.5">
-                        <div class="bg-blue-800 h-2.5 rounded-full"
-                            style="width: {{ (\App\Models\User::where('role', 'user')->count() / \App\Models\User::count()) * 100 }}%">
-                        </div>
+                        <div class="bg-blue-800 h-2.5 rounded-full" style="width: {{ $percentages['user'] }}%"></div>
                     </div>
                 </div>
             </div>

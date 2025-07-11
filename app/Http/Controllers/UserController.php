@@ -5,15 +5,66 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class UserController extends Controller
 {
     /**
+     * Cache key untuk statistik user
+     */
+    private const USER_STATS_CACHE_KEY = 'user_stats';
+    private const CACHE_TTL = 3600; // 1 jam
+
+    /**
+     * Get user statistics dengan caching
+     */
+    public function stats()
+    {
+        $stats = Cache::remember('user_stats', 3600, function () {
+            return [
+                'total_users' => User::count(),
+                'admin_count' => User::byRole('admin')->count(),
+                'manager_count' => User::byRole('manager')->count(),
+                'user_count' => User::byRole('user')->count(),
+                'recent_users' => User::latest()->take(5)->get(['id', 'name', 'email', 'created_at']),
+            ];
+        });
+
+        return response()->json($stats);
+    }
+
+    /**
+     * Clear user statistics cache
+     */
+    private function clearUserStatsCache()
+    {
+        Cache::forget(self::USER_STATS_CACHE_KEY);
+    }
+
+    /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::latest()->paginate(10);
+        // Build query dengan optimasi
+        $query = User::select(['id', 'name', 'email', 'role', 'created_at']);
+
+        // Filter berdasarkan role jika ada
+        if ($request->filled('role')) {
+            $query->byRole($request->role);
+        }
+
+        // Pencarian jika ada
+        if ($request->filled('search')) {
+            $query->search($request->search);
+        }
+
+        // Cache count untuk pagination yang lebih efisien
+        $users = $query->latest('created_at')
+            ->paginate(10)
+            ->withQueryString();
+
         return view('users.index', compact('users'));
     }
 
@@ -30,21 +81,22 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users',
-            'password' => 'required',
-            'role' => 'required',
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'string', 'min:8'],
+            'role' => ['required', 'string', 'in:admin,manager,user'],
         ]);
 
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => $request->role,
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'role' => $validated['role'],
         ]);
 
-        return redirect()->route('users.index');
+        return redirect()->route('users.index')
+            ->with('success', 'Pengguna berhasil ditambahkan.');
     }
 
     /**
@@ -60,6 +112,7 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
+        // Menggunakan route model binding yang sudah ada, tidak perlu query tambahan
         return view('users.edit', compact('user'));
     }
 
@@ -68,20 +121,28 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'role' => 'required',
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'role' => ['required', 'string', 'in:admin,manager,user'],
+            'password' => ['nullable', 'string', 'min:8'],
         ]);
 
-        $data = $request->only('name', 'email', 'role');
-        if ($request->password) {
-            $data['password'] = Hash::make($request->password);
+        $updateData = [
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'role' => $validated['role'],
+        ];
+
+        // Hanya hash password jika diisi
+        if (!empty($validated['password'])) {
+            $updateData['password'] = Hash::make($validated['password']);
         }
 
-        $user->update($data);
+        $user->update($updateData);
 
-        return redirect()->route('users.index');
+        return redirect()->route('users.index')
+            ->with('success', 'Pengguna berhasil diperbarui.');
     }
 
     /**
@@ -89,7 +150,148 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+        // Cek apakah user yang akan dihapus bukan user yang sedang login
+        if ($user->id === Auth::id()) {
+            return redirect()->route('users.index')
+                ->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
+        }
+
+        // Optimasi: gunakan single query untuk cek admin dan count sekaligus
+        if ($user->role === 'admin') {
+            $adminCount = User::byRole('admin')->count();
+            if ($adminCount <= 1) {
+                return redirect()->route('users.index')
+                    ->with('error', 'Tidak dapat menghapus admin terakhir.');
+            }
+        }
         $user->delete();
-        return redirect()->route('users.index');
+
+        return redirect()->route('users.index')
+            ->with('success', 'Pengguna berhasil dihapus.');
+    }
+
+    /**
+     * Bulk delete users with optimized queries
+     */
+    public function bulkDestroy(Request $request)
+    {
+        $userIds = $request->input('user_ids', []);
+
+        if (empty($userIds)) {
+            return redirect()->route('users.index')
+                ->with('error', 'Tidak ada pengguna yang dipilih.');
+        }
+
+        // Validasi: pastikan user tidak menghapus diri sendiri
+        if (in_array(Auth::id(), $userIds)) {
+            return redirect()->route('users.index')
+                ->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
+        }
+
+        // Optimasi: single query untuk cek admin dan count
+        $usersToDelete = User::whereIn('id', $userIds)->get(['id', 'role']);
+        $adminIds = $usersToDelete->where('role', 'admin')->pluck('id');
+
+        if ($adminIds->isNotEmpty()) {
+            $totalAdmins = User::byRole('admin')->count();
+            if ($totalAdmins <= $adminIds->count()) {
+                return redirect()->route('users.index')
+                    ->with('error', 'Tidak dapat menghapus semua admin.');
+            }
+        }
+
+        // Bulk delete dengan single query
+        User::whereIn('id', $userIds)->delete();
+
+        // Clear cache setelah operasi yang mengubah data
+        $this->clearUserStatsCache();
+
+        return redirect()->route('users.index')
+            ->with('success', 'Pengguna berhasil dihapus sebanyak ' . count($userIds) . ' data.');
+    }
+
+    /**
+     * Bulk update user roles
+     */
+    public function bulkUpdateRole(Request $request)
+    {
+        $validated = $request->validate([
+            'user_ids' => ['required', 'array'],
+            'user_ids.*' => ['integer', 'exists:users,id'],
+            'role' => ['required', 'string', 'in:admin,manager,user'],
+        ]);
+
+        $userIds = $validated['user_ids'];
+        $newRole = $validated['role'];
+
+        // Validasi: pastikan tidak mengubah role admin terakhir
+        if ($newRole !== 'admin') {
+            $usersToUpdate = User::whereIn('id', $userIds)->get(['id', 'role']);
+            $adminIds = $usersToUpdate->where('role', 'admin')->pluck('id');
+
+            if ($adminIds->isNotEmpty()) {
+                $totalAdmins = User::byRole('admin')->count();
+                if ($totalAdmins <= $adminIds->count()) {
+                    return redirect()->route('users.index')
+                        ->with('error', 'Tidak dapat mengubah role admin terakhir.');
+                }
+            }
+        }
+
+        // Bulk update dengan single query
+        User::whereIn('id', $userIds)->update(['role' => $newRole]);
+
+        // Clear cache setelah operasi bulk
+        $this->clearUserStatsCache();
+
+        return redirect()->route('users.index')
+            ->with('success', 'Role pengguna berhasil diperbarui sebanyak ' . count($userIds) . ' data.');
+    }
+
+    /**
+     * Export users data
+     */
+    public function export(Request $request)
+    {
+        $format = $request->input('format', 'csv');
+
+        $users = User::select(['id', 'name', 'email', 'role', 'created_at'])
+            ->when($request->filled('role'), function ($query) use ($request) {
+                return $query->byRole($request->role);
+            })
+            ->get();
+
+        if ($format === 'json') {
+            return response()->json($users);
+        }
+
+        // CSV export
+        $filename = 'users_' . date('Y-m-d') . '.csv';
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
+
+        $callback = function () use ($users) {
+            $file = fopen('php://output', 'w');
+
+            // CSV headers
+            fputcsv($file, ['ID', 'Name', 'Email', 'Role', 'Created At']);
+
+            // Data rows
+            foreach ($users as $user) {
+                fputcsv($file, [
+                    $user->id,
+                    $user->name,
+                    $user->email,
+                    $user->role,
+                    $user->created_at->format('Y-m-d H:i:s')
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

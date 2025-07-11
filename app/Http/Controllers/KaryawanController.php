@@ -17,15 +17,15 @@ class KaryawanController extends Controller
      */
     public function index()
     {
-        if (Gate::allows('admin') || Auth::user()->role == 'manager') {
-            $karyawans = Karyawan::with('user')
-                ->latest()
-                ->paginate(10);
+        $query = Karyawan::select(['id', 'user_id', 'tujuan', 'foto_tiket', 'tanggal', 'nopol', 'created_at'])
+            ->with(['user:id,name,email']) // Hanya load kolom yang diperlukan dari user
+            ->latest('created_at');
+
+        // Optimasi query berdasarkan role dengan single query
+        if (Gate::allows('admin') || Auth::user()->role === 'manager') {
+            $karyawans = $query->paginate(10);
         } else {
-            $karyawans = Karyawan::where('user_id', Auth::id())
-                ->with('user')
-                ->latest()
-                ->paginate(10);
+            $karyawans = $query->where('user_id', Auth::id())->paginate(10);
         }
 
         return view('karyawan.index', compact('karyawans'));
