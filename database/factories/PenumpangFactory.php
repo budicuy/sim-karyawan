@@ -44,8 +44,6 @@ class PenumpangFactory extends Factory
             'tanggal' => fake()->dateTimeBetween('now', '+30 days'),
             'nopol' => $this->generateNopol(),
             'jenis_kendaraan' => fake()->randomElement($jenisKendaraan),
-            'nomor_tiket' => $this->generateNomorTiket(),
-            'url_image_tiket' => null,
             'status' => fake()->boolean(70), // 70% chance true
         ];
     }
@@ -60,17 +58,5 @@ class PenumpangFactory extends Factory
         $hurufTambahan = fake()->randomElement(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']);
 
         return fake()->randomElement($huruf) . ' ' . $angka . ' ' . $hurufTambahan . fake()->randomElement(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']);
-    }
-
-    /**
-     * Generate nomor tiket unik
-     */
-    private function generateNomorTiket(): string
-    {
-        $prefix = 'TKT';
-        $timestamp = date('Ymd');
-        $random = fake()->numberBetween(1000, 9999);
-
-        return $prefix . $timestamp . $random;
     }
 }

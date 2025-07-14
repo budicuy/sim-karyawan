@@ -22,7 +22,7 @@
                 <table class="min-w-full bg-white">
                     <thead class="bg-blue-800 text-white">
                         <tr>
-                            <th class="py-3 px-4 text-left">Nama</th>
+                            <th class="py-3 px-4 text-left">Nama Penumpang</th>
                             <th class="py-3 px-4 text-left">Email</th>
                             <th class="py-3 px-4 text-left">Role</th>
                             <th class="py-3 px-4 text-left">Aksi</th>

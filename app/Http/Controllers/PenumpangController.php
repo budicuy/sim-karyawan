@@ -28,7 +28,7 @@ class PenumpangController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Penumpang::select(['id', 'user_id', 'usia', 'jenis_kelamin', 'tujuan', 'tanggal', 'nopol', 'jenis_kendaraan', 'nomor_tiket', 'status', 'created_at'])
+        $query = Penumpang::select(['id', 'user_id', 'usia', 'jenis_kelamin', 'tujuan', 'tanggal', 'nopol', 'jenis_kendaraan', 'status', 'created_at'])
             ->with(['user:id,name,email'])
             ->latest('created_at');
 
@@ -72,11 +72,6 @@ class PenumpangController extends Controller
         $data = $request->validated();
         $data['user_id'] = Auth::id();
 
-        // Handle file upload
-        if ($request->hasFile('url_image_tiket')) {
-            $data['url_image_tiket'] = $request->file('url_image_tiket')->store('tiket_photos', 'public');
-        }
-
         Penumpang::create($data);
 
         $this->clearCaches();
@@ -112,15 +107,6 @@ class PenumpangController extends Controller
 
         $data = $request->validated();
 
-        // Handle file upload
-        if ($request->hasFile('url_image_tiket')) {
-            // Delete old image if exists
-            if ($penumpang->url_image_tiket) {
-                Storage::disk('public')->delete($penumpang->url_image_tiket);
-            }
-            $data['url_image_tiket'] = $request->file('url_image_tiket')->store('tiket_photos', 'public');
-        }
-
         $penumpang->update($data);
 
         $this->clearCaches();
@@ -135,11 +121,6 @@ class PenumpangController extends Controller
     public function destroy(Penumpang $penumpang)
     {
         $this->authorize('delete', $penumpang);
-
-        // Delete associated image
-        if ($penumpang->url_image_tiket) {
-            Storage::disk('public')->delete($penumpang->url_image_tiket);
-        }
 
         $penumpang->delete();
 
@@ -253,7 +234,7 @@ class PenumpangController extends Controller
         $format = $request->input('format', 'csv');
 
         $query = Penumpang::with('user:id,name')
-            ->select(['id', 'user_id', 'usia', 'jenis_kelamin', 'tujuan', 'tanggal', 'nopol', 'jenis_kendaraan', 'nomor_tiket', 'status', 'created_at']);
+            ->select(['id', 'user_id', 'usia', 'jenis_kelamin', 'tujuan', 'tanggal', 'nopol', 'jenis_kendaraan', 'status', 'created_at']);
 
         // Filter by role
         if (Auth::user()->role === 'user') {
@@ -286,7 +267,7 @@ class PenumpangController extends Controller
             $file = fopen('php://output', 'w');
 
             // CSV headers
-            fputcsv($file, ['Nama', 'Usia', 'Jenis Kelamin', 'Tujuan', 'Tanggal', 'Nopol', 'Jenis Kendaraan', 'Nomor Tiket', 'Status']);
+            fputcsv($file, ['Nama', 'Usia', 'Jenis Kelamin', 'Tujuan', 'Tanggal', 'Nopol', 'Jenis Kendaraan', 'Status']);
 
             // Data rows
             foreach ($penumpangs as $penumpang) {
@@ -298,7 +279,6 @@ class PenumpangController extends Controller
                     $penumpang->tanggal->format('Y-m-d'),
                     $penumpang->nopol,
                     $penumpang->jenis_kendaraan,
-                    $penumpang->nomor_tiket,
                     $penumpang->status_label,
                 ]);
             }

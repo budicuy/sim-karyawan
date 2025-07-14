@@ -28,8 +28,6 @@ class StorePenumpangRequest extends FormRequest
             'tanggal' => 'required|date|after_or_equal:today',
             'nopol' => 'required|string|max:20',
             'jenis_kendaraan' => 'required|string|max:100',
-            'nomor_tiket' => 'required|string|max:50|unique:penumpang,nomor_tiket',
-            'url_image_tiket' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'status' => 'boolean',
         ];
     }
@@ -51,12 +49,6 @@ class StorePenumpangRequest extends FormRequest
             'tanggal.after_or_equal' => 'Tanggal tidak boleh kurang dari hari ini',
             'nopol.required' => 'Nomor polisi wajib diisi',
             'jenis_kendaraan.required' => 'Jenis kendaraan wajib diisi',
-            'nomor_tiket.required' => 'Nomor tiket wajib diisi',
-            'nomor_tiket.unique' => 'Nomor tiket sudah digunakan',
-            'url_image_tiket.required' => 'Foto tiket wajib diupload',
-            'url_image_tiket.image' => 'File harus berupa gambar',
-            'url_image_tiket.mimes' => 'Format gambar harus jpeg, png, atau jpg',
-            'url_image_tiket.max' => 'Ukuran gambar maksimal 2MB',
         ];
     }
 }

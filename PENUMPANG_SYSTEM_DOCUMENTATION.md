@@ -195,6 +195,56 @@
 -   **Storage**: Linked dan accessible
 -   **Cache**: Aktif dan berfungsi
 
+## Status Implementasi (Update 14 Juli 2025)
+
+### ✅ Penghapusan Fitur Image Tiket
+
+-   **Kolom url_image_tiket**: Dihapus dari database melalui migration
+-   **PenumpangSeeder**: Diperbaharui untuk tidak membuat image tiket fake
+-   **PenumpangFactory**: Diperbaharui untuk tidak generate url_image_tiket
+-   **Model Penumpang**: Kolom url_image_tiket dihapus dari fillable
+-   **Storage cleanup**: Folder tiket_photos dihapus dari storage
+-   **Data refresh**: Data penumpang di-refresh tanpa kolom image tiket
+
+### ✅ Struktur Data Penumpang (Updated)
+
+-   **user_id**: Relasi ke tabel users
+-   **usia**: Usia penumpang (16-65 tahun)
+-   **jenis_kelamin**: L (Laki-laki) atau P (Perempuan)
+-   **tujuan**: Tujuan perjalanan
+-   **tanggal**: Tanggal perjalanan
+-   **nopol**: Nomor polisi kendaraan
+-   **jenis_kendaraan**: Bus, Minibus, Mobil, Motor, atau Truk
+-   **status**: Open/Close (boolean)
+-   ~~**url_image_tiket**: Dihapus~~ ❌
+-   ~~**nomor_tiket**: Dihapus~~ ❌
+
+### ✅ Penghapusan Kolom Nomor Tiket
+
+-   **Kolom nomor_tiket**: Dihapus dari database melalui migration
+-   **PenumpangController**: Semua referensi nomor_tiket dihapus dari select, export, dan logic
+-   **DashboardController**: Referensi nomor_tiket dihapus dari recent penumpang
+-   **Request Classes**: Validasi nomor_tiket dihapus dari StorePenumpangRequest dan UpdatePenumpangRequest
+-   **Views**: Semua field dan tampilan nomor_tiket dihapus dari view index, create, edit, dan show
+-   **Data refresh**: Data penumpang di-refresh tanpa kolom nomor_tiket dan url_image_tiket
+
+### ✅ File yang Diperbaharui
+
+-   `/app/Models/Penumpang.php`: Hapus kolom url_image_tiket dan nomor_tiket dari fillable
+-   `/database/migrations/2025_07_14_103310_hapus_kolom_url_image_tiket_dari_penumpang_table.php`: Migration baru
+-   `/database/migrations/2025_07_14_104125_hapus_kolom_nomor_tiket_dari_penumpang_table.php`: Migration baru
+-   `/database/seeders/PenumpangSeeder.php`: Hapus logic pembuatan image tiket dan nomor_tiket
+-   `/database/factories/PenumpangFactory.php`: Hapus kolom url_image_tiket dan nomor_tiket
+-   `/app/Http/Controllers/PenumpangController.php`: Hapus semua referensi kolom yang dihapus
+-   `/app/Http/Controllers/DashboardController.php`: Hapus referensi nomor_tiket dari recent penumpang
+-   `/app/Http/Requests/StorePenumpangRequest.php`: Hapus validasi kolom yang dihapus
+-   `/app/Http/Requests/UpdatePenumpangRequest.php`: Hapus validasi kolom yang dihapus
+-   `/resources/views/penumpang/index.blade.php`: Hapus tampilan kolom yang dihapus
+-   `/resources/views/penumpang/create.blade.php`: Hapus field kolom yang dihapus
+-   `/resources/views/penumpang/edit.blade.php`: Hapus field kolom yang dihapus
+-   `/resources/views/penumpang/show.blade.php`: Hapus tampilan kolom yang dihapus dan modal image
+-   `storage/app/public/tiket_photos/`: Folder dihapus
+
 ## Hasil Akhir
 
 ### ✅ Sistem Penumpang Berhasil Dibangun

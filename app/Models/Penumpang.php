@@ -20,8 +20,6 @@ class Penumpang extends Model
         'tanggal',
         'nopol',
         'jenis_kendaraan',
-        'nomor_tiket',
-        'url_image_tiket',
         'status',
     ];
 
@@ -63,7 +61,6 @@ class Penumpang extends Model
             $q->where('tujuan', 'like', "%{$search}%")
                 ->orWhere('nopol', 'like', "%{$search}%")
                 ->orWhere('jenis_kendaraan', 'like', "%{$search}%")
-                ->orWhere('nomor_tiket', 'like', "%{$search}%")
                 ->orWhereHas('user', function ($userQuery) use ($search) {
                     $userQuery->where('name', 'like', "%{$search}%");
                 });

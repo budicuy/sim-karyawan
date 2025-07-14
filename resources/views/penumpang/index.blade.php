@@ -3,7 +3,6 @@
 
 <head>
     <title>Data Penumpang</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </head>
 
@@ -45,7 +44,7 @@
                     <div class="w-full">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Pencarian</label>
                         <input type="text" name="search" value="{{ request('search') }}"
-                            placeholder="Cari nama, tujuan, nopol, nomor tiket..."
+                            placeholder="Cari nama, tujuan, nopol..."
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
 
@@ -127,7 +126,6 @@
                             <th class="py-3 px-4 text-left">Tanggal</th>
                             <th class="py-3 px-4 text-left">Nopol</th>
                             <th class="py-3 px-4 text-left">Jenis Kendaraan</th>
-                            <th class="py-3 px-4 text-left">Nomor Tiket</th>
                             <th class="py-3 px-4 text-left">Status</th>
                             <th class="py-3 px-4 text-center">Aksi</th>
                         </tr>
@@ -149,7 +147,6 @@
                                 <td class="py-3 px-4 border-b">{{ $penumpang->tanggal->format('d/m/Y') }}</td>
                                 <td class="py-3 px-4 border-b">{{ $penumpang->nopol }}</td>
                                 <td class="py-3 px-4 border-b">{{ $penumpang->jenis_kendaraan }}</td>
-                                <td class="py-3 px-4 border-b">{{ $penumpang->nomor_tiket }}</td>
                                 <td class="py-3 px-4 border-b">
                                     <span
                                         class="px-2 py-1 text-xs rounded-full {{ $penumpang->status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
@@ -228,10 +225,6 @@
                             <div>
                                 <span class="font-medium">Kendaraan:</span>
                                 <span class="text-gray-800">{{ $penumpang->jenis_kendaraan }}</span>
-                            </div>
-                            <div class="col-span-2">
-                                <span class="font-medium">Nomor Tiket:</span>
-                                <span class="text-gray-800">{{ $penumpang->nomor_tiket }}</span>
                             </div>
                         </div>
 

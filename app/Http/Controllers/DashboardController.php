@@ -45,7 +45,7 @@ class DashboardController extends Controller
         // Cache recent penumpang data
         $recentPenumpang = Cache::remember(self::RECENT_PENUMPANG_CACHE_KEY, self::CACHE_TTL, function () {
             $query = Penumpang::with('user:id,name')
-                ->select(['id', 'user_id', 'tujuan', 'tanggal', 'nopol', 'jenis_kendaraan', 'nomor_tiket', 'status', 'created_at'])
+                ->select(['id', 'user_id', 'tujuan', 'tanggal', 'nopol', 'jenis_kendaraan', 'status', 'created_at'])
                 ->latest();
 
             // Filter by role

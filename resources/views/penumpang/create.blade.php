@@ -108,27 +108,6 @@
                         @enderror
                     </div>
 
-                    <div>
-                        <label for="nomor_tiket" class="block text-sm font-medium text-gray-700 mb-1">Nomor
-                            Tiket</label>
-                        <input type="text" name="nomor_tiket" id="nomor_tiket" value="{{ old('nomor_tiket') }}"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('nomor_tiket') border-red-500 @enderror"
-                            required>
-                        @error('nomor_tiket')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-                </div>
-
-                <div>
-                    <label for="url_image_tiket" class="block text-sm font-medium text-gray-700 mb-1">Foto Tiket</label>
-                    <input type="file" name="url_image_tiket" id="url_image_tiket" accept="image/*"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('url_image_tiket') border-red-500 @enderror"
-                        required>
-                    @error('url_image_tiket')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                    <p class="text-sm text-gray-500 mt-1">Format: JPEG, PNG, JPG. Maksimal 2MB</p>
                 </div>
 
                 <div>

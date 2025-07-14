@@ -84,14 +84,9 @@
 
                 <div class="space-y-4">
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Informasi Tiket</h3>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Informasi Status</h3>
 
                         <div class="bg-gray-50 p-4 rounded-lg space-y-3">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">Nomor Tiket</label>
-                                <p class="text-gray-900 font-mono">{{ $penumpang->nomor_tiket }}</p>
-                            </div>
-
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Status</label>
                                 <span
@@ -111,22 +106,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Foto Tiket</h3>
-
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            @if ($penumpang->url_image_tiket)
-                                <img src="{{ asset('storage/' . $penumpang->url_image_tiket) }}"
-                                    alt="Foto Tiket {{ $penumpang->nomor_tiket }}"
-                                    class="w-full max-w-sm mx-auto rounded-lg shadow-md cursor-pointer"
-                                    onclick="openImageModal(this.src)">
-                                <p class="text-sm text-gray-600 text-center mt-2">Klik untuk memperbesar</p>
-                            @else
-                                <p class="text-gray-500 text-center">Tidak ada foto tiket</p>
-                            @endif
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -144,36 +123,6 @@
                 </div>
             @endcan
         </div>
-
-        <!-- Modal untuk memperbesar gambar -->
-        <div id="imageModal"
-            class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
-            <div class="relative max-w-4xl max-h-full">
-                <img id="modalImage" src="" alt="Foto Tiket" class="max-w-full max-h-full rounded-lg">
-                <button onclick="closeImageModal()"
-                    class="absolute top-2 right-2 bg-white text-black rounded-full w-8 h-8 flex items-center justify-center hover:bg-gray-200">
-                    ×
-                </button>
-            </div>
-        </div>
-
-        <script>
-            function openImageModal(src) {
-                document.getElementById('modalImage').src = src;
-                document.getElementById('imageModal').classList.remove('hidden');
-            }
-
-            function closeImageModal() {
-                document.getElementById('imageModal').classList.add('hidden');
-            }
-
-            // Close modal when clicking outside the image
-            document.getElementById('imageModal').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    closeImageModal();
-                }
-            });
-        </script>
     </x-admin-layout>
 </body>
 
