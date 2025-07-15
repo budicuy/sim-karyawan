@@ -26,7 +26,7 @@
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                 <h2 class="text-lg md:text-xl font-bold text-gray-800">Data Manifes Penumpang</h2>
                 <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
-                    <a href="{{ route('penumpang.export', ['format' => 'csv']) }}"
+                    <a href="{{ route('penumpang.export', array_merge(request()->query(), ['format' => 'csv'])) }}"
                         class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition text-center text-sm">
                         Export CSV
                     </a>

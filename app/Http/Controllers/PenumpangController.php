@@ -211,8 +211,16 @@ class PenumpangController extends Controller
             $query->byStatus($request->boolean('status'));
         }
 
+        if ($request->filled('search')) {
+            $query->search($request->search);
+        }
+
         if ($request->filled('date_from') && $request->filled('date_to')) {
             $query->byDateRange($request->date_from, $request->date_to);
+        }
+
+        if ($request->filled('time_from') && $request->filled('time_to')) {
+            $query->byTimeRange($request->time_from, $request->time_to);
         }
 
         $penumpangs = $query->get();
@@ -232,7 +240,7 @@ class PenumpangController extends Controller
             $file = fopen('php://output', 'w');
 
             // CSV headers
-            fputcsv($file, ['Nama', 'Usia', 'Jenis Kelamin', 'Tujuan', 'Tanggal', 'Nopol', 'Jenis Kendaraan', 'Status']);
+            fputcsv($file, ['Nama', 'Usia', 'Jenis Kelamin', 'Tujuan', 'Tanggal', 'Jam', 'Nopol', 'Jenis Kendaraan', 'Status']);
 
             // Data rows
             foreach ($penumpangs as $penumpang) {
@@ -242,6 +250,7 @@ class PenumpangController extends Controller
                     $penumpang->jenis_kelamin_label,
                     $penumpang->tujuan,
                     $penumpang->tanggal->format('Y-m-d'),
+                    $penumpang->tanggal->format('H:i'),
                     $penumpang->nopol,
                     $penumpang->jenis_kendaraan,
                     $penumpang->status_label,
