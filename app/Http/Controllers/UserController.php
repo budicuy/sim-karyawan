@@ -16,23 +16,6 @@ class UserController extends Controller
     private const USER_STATS_CACHE_KEY = 'user_stats';
     private const CACHE_TTL = 3600; // 1 jam
 
-    /**
-     * Get user statistics dengan caching
-     */
-    public function stats()
-    {
-        $stats = Cache::remember('user_stats', 3600, function () {
-            return [
-                'total_users' => User::count(),
-                'admin_count' => User::byRole('admin')->count(),
-                'manager_count' => User::byRole('manager')->count(),
-                'user_count' => User::byRole('user')->count(),
-                'recent_users' => User::latest()->take(5)->get(['id', 'name', 'email', 'created_at']),
-            ];
-        });
-
-        return response()->json($stats);
-    }
 
     /**
      * Clear user statistics cache
@@ -246,52 +229,5 @@ class UserController extends Controller
 
         return redirect()->route('users.index')
             ->with('success', 'Role pengguna berhasil diperbarui sebanyak ' . count($userIds) . ' data.');
-    }
-
-    /**
-     * Export users data
-     */
-    public function export(Request $request)
-    {
-        $format = $request->input('format', 'csv');
-
-        $users = User::select(['id', 'name', 'email', 'role', 'created_at'])
-            ->when($request->filled('role'), function ($query) use ($request) {
-                return $query->byRole($request->role);
-            })
-            ->get();
-
-        if ($format === 'json') {
-            return response()->json($users);
-        }
-
-        // CSV export
-        $filename = 'users_' . date('Y-m-d') . '.csv';
-        $headers = [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
-        ];
-
-        $callback = function () use ($users) {
-            $file = fopen('php://output', 'w');
-
-            // CSV headers
-            fputcsv($file, ['ID', 'Name', 'Email', 'Role', 'Created At']);
-
-            // Data rows
-            foreach ($users as $user) {
-                fputcsv($file, [
-                    $user->id,
-                    $user->name,
-                    $user->email,
-                    $user->role,
-                    $user->created_at->format('Y-m-d H:i:s')
-                ]);
-            }
-
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
     }
 }

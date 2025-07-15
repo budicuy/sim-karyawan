@@ -142,42 +142,6 @@ class PenumpangController extends Controller
     }
 
     /**
-     * Get statistics for dashboard
-     */
-    public function stats()
-    {
-        $stats = Cache::remember(self::PENUMPANG_STATS_CACHE_KEY, self::CACHE_TTL, function () {
-            $query = Penumpang::query();
-
-            return [
-                'total_penumpang' => $query->count(),
-                'open_status' => $query->byStatus(true)->count(),
-                'close_status' => $query->byStatus(false)->count(),
-                'today_penumpang' => $query->whereDate('tanggal', today())->count(),
-                'male_count' => $query->where('jenis_kelamin', 'L')->count(),
-                'female_count' => $query->where('jenis_kelamin', 'P')->count(),
-            ];
-        });
-
-        return response()->json($stats);
-    }
-
-    /**
-     * Get recent penumpang data
-     */
-    public function recent()
-    {
-        $recentPenumpang = Cache::remember(self::RECENT_PENUMPANG_CACHE_KEY, self::CACHE_TTL, function () {
-            $query = Penumpang::select(['id', 'nama_penumpang', 'tujuan', 'tanggal', 'nopol', 'status', 'created_at'])
-                ->latest();
-
-            return $query->take(5)->get();
-        });
-
-        return response()->json($recentPenumpang);
-    }
-
-    /**
      * Bulk operations
      */
     public function bulkUpdateStatus(Request $request)

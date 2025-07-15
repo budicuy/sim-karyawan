@@ -80,14 +80,4 @@ class DashboardController extends Controller
 
         return response()->json(['message' => 'Dashboard cache cleared successfully']);
     }
-
-    /**
-     * Get dashboard stats as JSON (for AJAX)
-     */
-    public function stats()
-    {
-        $stats = $this->getDashboardStats();
-
-        return response()->json($stats);
-    }
 }

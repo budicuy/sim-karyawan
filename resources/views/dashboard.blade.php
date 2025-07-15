@@ -228,7 +228,6 @@
                 </div>
             </div>
 
-            <!-- Placeholder for another chart or info -->
             <div class="bg-white rounded-lg shadow p-4 md:p-6">
                 <h2 class="text-lg md:text-xl font-bold mb-4 text-gray-800">Informasi Sistem</h2>
                 <div class="text-center text-gray-500 mt-10">
