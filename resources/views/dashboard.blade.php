@@ -203,7 +203,7 @@
                         <span class="text-sm md:text-base text-gray-600">Admin</span>
                         <span class="text-blue-800 font-semibold">{{ $stats['admin_count'] }}</span>
                     </div>
-                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
                         <div class="bg-blue-800 h-2.5 rounded-full" style="width: {{ $percentages['admin'] }}%">
                         </div>
                     </div>
@@ -212,7 +212,7 @@
                         <span class="text-sm md:text-base text-gray-600">Manager</span>
                         <span class="text-green-600 font-semibold">{{ $stats['manager_count'] }}</span>
                     </div>
-                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
                         <div class="bg-green-600 h-2.5 rounded-full" style="width: {{ $percentages['manager'] }}%">
                         </div>
                     </div>
@@ -221,7 +221,7 @@
                         <span class="text-sm md:text-base text-gray-600">User</span>
                         <span class="text-yellow-500 font-semibold">{{ $stats['user_count'] }}</span>
                     </div>
-                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
                         <div class="bg-yellow-500 h-2.5 rounded-full" style="width: {{ $percentages['user'] }}%">
                         </div>
                     </div>

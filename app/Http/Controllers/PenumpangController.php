@@ -49,7 +49,7 @@ class PenumpangController extends Controller
             $query->byTimeRange($request->time_from, $request->time_to);
         }
 
-        $penumpangs = $query->paginate(50)->withQueryString();
+        $penumpangs = $query->paginate(20)->withQueryString();
 
         return view('penumpang.index', compact('penumpangs'));
     }

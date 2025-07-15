@@ -17,7 +17,7 @@ class PenumpangFactory extends Factory
      */
     public function definition(): array
     {
-        $jenisKendaraan = ['Bus', 'Minibus', 'Mobil', 'Motor', 'Truk'];
+        $jenisKendaraan = ['avanza', 'Toyota', 'Honda', 'Suzuki', 'Daihatsu', 'Mitsubishi', 'Nissan', 'Isuzu', 'Kawasaki', 'Yamaha'];
         $tujuanDestinasi = [
             'Jakarta',
             'Surabaya',
