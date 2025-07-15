@@ -49,7 +49,7 @@ class PenumpangController extends Controller
             $query->byTimeRange($request->time_from, $request->time_to);
         }
 
-        $penumpangs = $query->paginate(10)->withQueryString();
+        $penumpangs = $query->paginate(50)->withQueryString();
 
         return view('penumpang.index', compact('penumpangs'));
     }
@@ -234,7 +234,7 @@ class PenumpangController extends Controller
         if ($format === 'pdf') {
             $pdf = Pdf::loadView('penumpang.pdf', ['penumpangs' => $penumpangs]);
 
-            $filename = 'manifes_penumpang_' . date('Y-m-d_H-i-s') . '.pdf';
+            $filename = 'Manifes_Penumpang_' . date('Y-m-d') . '.pdf';
 
             return $pdf->download($filename);
         }
