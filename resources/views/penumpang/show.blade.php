@@ -34,13 +34,8 @@
 
                         <div class="bg-gray-50 p-4 rounded-lg space-y-3">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700">Nama</label>
-                                <p class="text-gray-900">{{ $penumpang->user->name }}</p>
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">Email</label>
-                                <p class="text-gray-900">{{ $penumpang->user->email }}</p>
+                                <label class="block text-sm font-medium text-gray-700">Nama Penumpang</label>
+                                <p class="text-gray-900">{{ $penumpang->nama_penumpang }}</p>
                             </div>
 
                             <div>

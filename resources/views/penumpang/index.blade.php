@@ -49,7 +49,7 @@
                     </div>
 
                     <!-- Filter Row -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
                             <select name="status"
@@ -67,6 +67,16 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Sampai Tanggal</label>
                             <input type="date" name="date_to" value="{{ request('date_to') }}"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Dari Jam</label>
+                            <input type="time" name="time_from" value="{{ request('time_from') }}"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Sampai Jam</label>
+                            <input type="time" name="time_to" value="{{ request('time_to') }}"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
                         <div class="flex items-end">
@@ -118,33 +128,35 @@
                                     <input type="checkbox" @click="toggleAll()"
                                         class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
                                 </th>
+                                <th class="py-3 px-4 text-left">Nama Penumpang</th>
+                                <th class="py-3 px-4 text-left">Usia</th>
+                                <th class="py-3 px-4 text-left">Jenis Kelamin</th>
+                                <th class="py-3 px-4 text-left">Tujuan</th>
+                                <th class="py-3 px-4 text-left">Tanggal</th>
+                                <th class="py-3 px-4 text-left">Jam</th>
+                                <th class="py-3 px-4 text-left">Nopol</th>
+                                <th class="py-3 px-4 text-left">Jenis Kendaraan</th>
+                                <th class="py-3 px-4 text-left">Status</th>
+                                <th class="py-3 px-4 text-center">Aksi</th>
                             @endcanany
-                            <th class="py-3 px-4 text-left">Nama</th>
-                            <th class="py-3 px-4 text-left">Usia</th>
-                            <th class="py-3 px-4 text-left">Jenis Kelamin</th>
-                            <th class="py-3 px-4 text-left">Tujuan</th>
-                            <th class="py-3 px-4 text-left">Tanggal</th>
-                            <th class="py-3 px-4 text-left">Nopol</th>
-                            <th class="py-3 px-4 text-left">Jenis Kendaraan</th>
-                            <th class="py-3 px-4 text-left">Status</th>
-                            <th class="py-3 px-4 text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="text-gray-700">
-                        @foreach ($penumpangs as $penumpang)
+                        @forelse ($penumpangs as $penumpang)
                             <tr class="hover:bg-gray-50">
                                 @canany(['admin', 'manager'])
                                     <td class="py-3 px-4 border-b">
-                                        <input type="checkbox" value="{{ $penumpang->id }}"
-                                            @change="toggleItem({{ $penumpang->id }})"
+                                        <input type="checkbox" name="ids[]" value="{{ $penumpang->id }}"
+                                            x-model="selectedItems"
                                             class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
                                     </td>
                                 @endcanany
-                                <td class="py-3 px-4 border-b">{{ $penumpang->user->name }}</td>
+                                <td class="py-3 px-4 border-b">{{ $penumpang->nama_penumpang }}</td>
                                 <td class="py-3 px-4 border-b">{{ $penumpang->usia }}</td>
                                 <td class="py-3 px-4 border-b">{{ $penumpang->jenis_kelamin_label }}</td>
                                 <td class="py-3 px-4 border-b">{{ $penumpang->tujuan }}</td>
                                 <td class="py-3 px-4 border-b">{{ $penumpang->tanggal->format('d/m/Y') }}</td>
+                                <td class="py-3 px-4 border-b">{{ $penumpang->tanggal->format('H:i') }}</td>
                                 <td class="py-3 px-4 border-b">{{ $penumpang->nopol }}</td>
                                 <td class="py-3 px-4 border-b">{{ $penumpang->jenis_kendaraan }}</td>
                                 <td class="py-3 px-4 border-b">
@@ -159,41 +171,43 @@
                                             <a href="{{ route('penumpang.show', $penumpang) }}"
                                                 class="text-blue-500 hover:underline text-sm">Lihat</a>
                                         </button>
-                                        @can('update', $penumpang)
-                                            <button>
-                                                <a href="{{ route('penumpang.edit', $penumpang) }}"
-                                                    class="text-yellow-500 hover:underline text-sm">Edit</a>
-                                            </button>
-                                        @endcan
-                                        @can('delete', $penumpang)
-                                            <form method="POST" action="{{ route('penumpang.destroy', $penumpang) }}"
-                                                class="inline" onsubmit="return confirm('Yakin ingin menghapus?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit"
-                                                    class="text-red-500 hover:underline text-sm">Hapus</button>
-                                            </form>
-                                        @endcan
+                                        <button>
+                                            <a href="{{ route('penumpang.edit', $penumpang) }}"
+                                                class="text-yellow-500 hover:underline text-sm">Edit</a>
+                                        </button>
+                                        <form method="POST" action="{{ route('penumpang.destroy', $penumpang) }}"
+                                            class="inline" onsubmit="return confirm('Yakin ingin menghapus?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                class="text-red-500 hover:underline text-sm">Hapus</button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="10" class="py-3 px-4 text-center text-gray-500">
+                                    Tidak ada data penumpang.
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
 
             <!-- Mobile/Tablet Card View -->
             <div class="lg:hidden space-y-4">
-                @foreach ($penumpangs as $penumpang)
+                @forelse ($penumpangs as $penumpang)
                     <div class="bg-white border rounded-lg p-4 shadow-sm">
                         <div class="flex justify-between items-start mb-3">
                             <div class="flex items-center space-x-3">
                                 @canany(['admin', 'manager'])
-                                    <input type="checkbox" value="{{ $penumpang->id }}"
-                                        @change="toggleItem({{ $penumpang->id }})"
+                                    <input type="checkbox" name="ids[]" value="{{ $penumpang->id }}"
+                                        x-model="selectedItems"
                                         class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
                                 @endcanany
-                                <h3 class="font-semibold text-gray-800">{{ $penumpang->user->name }}</h3>
+                                <h3 class="font-semibold text-gray-800">{{ $penumpang->nama_penumpang }}</h3>
                             </div>
                             <span
                                 class="px-2 py-1 text-xs rounded-full {{ $penumpang->status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
@@ -219,6 +233,10 @@
                                 <span class="text-gray-800">{{ $penumpang->tanggal->format('d/m/Y') }}</span>
                             </div>
                             <div>
+                                <span class="font-medium">Jam:</span>
+                                <span class="text-gray-800">{{ $penumpang->tanggal->format('H:i') }}</span>
+                            </div>
+                            <div>
                                 <span class="font-medium">Nopol:</span>
                                 <span class="text-gray-800">{{ $penumpang->nopol }}</span>
                             </div>
@@ -233,23 +251,23 @@
                                 <a href="{{ route('penumpang.show', $penumpang) }}"
                                     class="text-blue-500 hover:underline text-sm">Lihat</a>
                             </button>
-                            @can('update', $penumpang)
-                                <button>
-                                    <a href="{{ route('penumpang.edit', $penumpang) }}"
-                                        class="text-yellow-500 hover:underline text-sm">Edit</a>
-                                </button>
-                            @endcan
-                            @can('delete', $penumpang)
-                                <form method="POST" action="{{ route('penumpang.destroy', $penumpang) }}"
-                                    class="inline" onsubmit="return confirm('Yakin ingin menghapus?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-red-500 hover:underline text-sm">Hapus</button>
-                                </form>
-                            @endcan
+                            <button>
+                                <a href="{{ route('penumpang.edit', $penumpang) }}"
+                                    class="text-yellow-500 hover:underline text-sm">Edit</a>
+                            </button>
+                            <form method="POST" action="{{ route('penumpang.destroy', $penumpang) }}"
+                                class="inline" onsubmit="return confirm('Yakin ingin menghapus?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-500 hover:underline text-sm">Hapus</button>
+                            </form>
                         </div>
                     </div>
-                @endforeach
+                @empty
+                    <div class="text-center py-8">
+                        <p class="text-gray-500">Tidak ada data penumpang yang ditemukan.</p>
+                    </div>
+                @endforelse
             </div>
 
             <!-- Pagination -->
@@ -259,80 +277,45 @@
         </div>
 
         <script>
-            function toggleAll() {
-                const checkboxes = document.querySelectorAll('input[type="checkbox"][value]');
-                const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            document.addEventListener('alpine:init', () => {
+                Alpine.data('bulkActions', () => ({
+                    selectedItems: [],
+                    toggleAll(event) {
+                        const checkboxes = document.querySelectorAll('input[name="ids[]"]');
+                        this.selectedItems = event.target.checked ? Array.from(checkboxes).map(cb => cb
+                            .value) : [];
+                    },
+                    bulkUpdateStatus(status) {
+                        if (this.selectedItems.length === 0) {
+                            alert('Pilih setidaknya satu item.');
+                            return;
+                        }
 
-                checkboxes.forEach(cb => {
-                    cb.checked = !allChecked;
-                });
-
-                updateSelectedItems();
-            }
-
-            function toggleItem(id) {
-                updateSelectedItems();
-            }
-
-            function updateSelectedItems() {
-                const checkboxes = document.querySelectorAll('input[type="checkbox"][value]:checked');
-                const selectedItems = Array.from(checkboxes).map(cb => parseInt(cb.value));
-
-                // Update Alpine.js data
-                document.dispatchEvent(new CustomEvent('update-selected', {
-                    detail: {
-                        selectedItems
+                        fetch('{{ route('penumpang.bulk-update-status') }}', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                },
+                                body: JSON.stringify({
+                                    ids: this.selectedItems,
+                                    status: status
+                                })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    window.location.reload();
+                                } else {
+                                    alert('Gagal memperbarui status.');
+                                }
+                            })
+                            .catch(() => alert('Terjadi kesalahan.'));
                     }
                 }));
-            }
-
-            function bulkUpdateStatus(status) {
-                const checkboxes = document.querySelectorAll('input[type="checkbox"][value]:checked');
-                const selectedIds = Array.from(checkboxes).map(cb => cb.value);
-
-                if (selectedIds.length === 0) {
-                    alert('Pilih minimal satu item');
-                    return;
-                }
-
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = '{{ route('penumpang.bulk-update-status') }}';
-
-                // CSRF token
-                const csrfToken = document.createElement('input');
-                csrfToken.type = 'hidden';
-                csrfToken.name = '_token';
-                csrfToken.value = '{{ csrf_token() }}';
-                form.appendChild(csrfToken);
-
-                // Method
-                const methodField = document.createElement('input');
-                methodField.type = 'hidden';
-                methodField.name = '_method';
-                methodField.value = 'PATCH';
-                form.appendChild(methodField);
-
-                // Status
-                const statusField = document.createElement('input');
-                statusField.type = 'hidden';
-                statusField.name = 'status';
-                statusField.value = status;
-                form.appendChild(statusField);
-
-                // Selected IDs
-                selectedIds.forEach(id => {
-                    const idField = document.createElement('input');
-                    idField.type = 'hidden';
-                    idField.name = 'penumpang_ids[]';
-                    idField.value = id;
-                    form.appendChild(idField);
-                });
-
-                document.body.appendChild(form);
-                form.submit();
-            }
+            });
         </script>
+
     </x-admin-layout>
 </body>
 

@@ -33,6 +33,17 @@
                 class="space-y-5">
                 @csrf
 
+                <div>
+                    <label for="nama_penumpang" class="block text-sm font-medium text-gray-700 mb-1">Nama
+                        Penumpang</label>
+                    <input type="text" name="nama_penumpang" id="nama_penumpang" value="{{ old('nama_penumpang') }}"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('nama_penumpang') border-red-500 @enderror"
+                        required>
+                    @error('nama_penumpang')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label for="usia" class="block text-sm font-medium text-gray-700 mb-1">Usia</label>
@@ -75,8 +86,9 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label for="tanggal" class="block text-sm font-medium text-gray-700 mb-1">Tanggal</label>
-                        <input type="date" name="tanggal" id="tanggal" value="{{ old('tanggal') }}"
+                        <label for="tanggal" class="block text-sm font-medium text-gray-700 mb-1">Tanggal dan
+                            Waktu</label>
+                        <input type="datetime-local" name="tanggal" id="tanggal" value="{{ old('tanggal') }}"
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('tanggal') border-red-500 @enderror"
                             required>
                         @error('tanggal')

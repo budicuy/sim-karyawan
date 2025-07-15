@@ -18,40 +18,38 @@ class DashboardController extends Controller
     private const CACHE_TTL = 300; // 5 menit untuk dashboard
 
     /**
+     * Get dashboard statistics from cache or database
+     */
+    private function getDashboardStats()
+    {
+        return Cache::remember(self::DASHBOARD_STATS_CACHE_KEY, self::CACHE_TTL, function () {
+            $penumpangQuery = Penumpang::query();
+            $userQuery = User::query();
+
+            return [
+                'total_penumpang' => $penumpangQuery->clone()->count(),
+                'total_users'     => $userQuery->clone()->count(),
+                'admin_count'     => $userQuery->clone()->byRole('admin')->count(),
+                'manager_count'   => $userQuery->clone()->byRole('manager')->count(),
+                'user_count'      => $userQuery->clone()->byRole('user')->count(),
+                'open_status'     => $penumpangQuery->clone()->where('status', true)->count(),
+                'close_status'    => $penumpangQuery->clone()->where('status', false)->count(),
+            ];
+        });
+    }
+
+    /**
      * Display the dashboard with optimized queries
      */
     public function index()
     {
-        // Cache dashboard statistics
-        $stats = Cache::remember(self::DASHBOARD_STATS_CACHE_KEY, self::CACHE_TTL, function () {
-            $query = Penumpang::query();
-
-            // Filter by role
-            if (Auth::user()->role === 'user') {
-                $query->where('user_id', Auth::id());
-            }
-
-            return [
-                'total_penumpang' => $query->count(),
-                'total_users' => User::count(),
-                'admin_count' => User::byRole('admin')->count(),
-                'manager_count' => User::byRole('manager')->count(),
-                'user_count' => User::byRole('user')->count(),
-                'open_status' => $query->where('status', true)->count(),
-                'close_status' => $query->where('status', false)->count(),
-            ];
-        });
+        // Get dashboard statistics
+        $stats = $this->getDashboardStats();
 
         // Cache recent penumpang data
         $recentPenumpang = Cache::remember(self::RECENT_PENUMPANG_CACHE_KEY, self::CACHE_TTL, function () {
-            $query = Penumpang::with('user:id,name')
-                ->select(['id', 'user_id', 'tujuan', 'tanggal', 'nopol', 'jenis_kendaraan', 'status', 'created_at'])
+            $query = Penumpang::select(['id', 'nama_penumpang', 'tujuan', 'tanggal', 'nopol', 'jenis_kendaraan', 'status', 'created_at'])
                 ->latest();
-
-            // Filter by role
-            if (Auth::user()->role === 'user') {
-                $query->where('user_id', Auth::id());
-            }
 
             return $query->take(5)->get();
         });
@@ -83,24 +81,7 @@ class DashboardController extends Controller
      */
     public function stats()
     {
-        $stats = Cache::remember(self::DASHBOARD_STATS_CACHE_KEY, self::CACHE_TTL, function () {
-            $query = Penumpang::query();
-
-            // Filter by role
-            if (Auth::user()->role === 'user') {
-                $query->where('user_id', Auth::id());
-            }
-
-            return [
-                'total_penumpang' => $query->count(),
-                'total_users' => User::count(),
-                'admin_count' => User::byRole('admin')->count(),
-                'manager_count' => User::byRole('manager')->count(),
-                'user_count' => User::byRole('user')->count(),
-                'open_status' => $query->where('status', true)->count(),
-                'close_status' => $query->where('status', false)->count(),
-            ];
-        });
+        $stats = $this->getDashboardStats();
 
         return response()->json($stats);
     }

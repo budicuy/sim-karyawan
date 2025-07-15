@@ -37,7 +37,7 @@ class PenumpangFactory extends Factory
         ];
 
         return [
-            'user_id' => User::factory(),
+            'nama_penumpang' => fake()->name(),
             'usia' => fake()->numberBetween(16, 65),
             'jenis_kelamin' => fake()->randomElement(['L', 'P']),
             'tujuan' => fake()->randomElement($tujuanDestinasi),

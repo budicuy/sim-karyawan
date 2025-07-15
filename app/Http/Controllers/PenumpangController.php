@@ -28,15 +28,8 @@ class PenumpangController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Penumpang::select(['id', 'user_id', 'usia', 'jenis_kelamin', 'tujuan', 'tanggal', 'nopol', 'jenis_kendaraan', 'status', 'created_at'])
-            ->with(['user:id,name,email'])
+        $query = Penumpang::select(['id', 'nama_penumpang', 'usia', 'jenis_kelamin', 'tujuan', 'tanggal', 'nopol', 'jenis_kendaraan', 'status', 'created_at'])
             ->latest('created_at');
-
-        // Role-based data access
-        if (Auth::user()->role === 'user') {
-            $query->ownData(Auth::id());
-        }
-        // Manager and admin can see all data
 
         // Apply filters
         if ($request->filled('status')) {
@@ -49,6 +42,10 @@ class PenumpangController extends Controller
 
         if ($request->filled('date_from') && $request->filled('date_to')) {
             $query->byDateRange($request->date_from, $request->date_to);
+        }
+
+        if ($request->filled('time_from') && $request->filled('time_to')) {
+            $query->byTimeRange($request->time_from, $request->time_to);
         }
 
         $penumpangs = $query->paginate(10)->withQueryString();
@@ -70,7 +67,6 @@ class PenumpangController extends Controller
     public function store(StorePenumpangRequest $request)
     {
         $data = $request->validated();
-        $data['user_id'] = Auth::id();
 
         Penumpang::create($data);
 
@@ -85,7 +81,6 @@ class PenumpangController extends Controller
      */
     public function show(Penumpang $penumpang)
     {
-        $this->authorize('view', $penumpang);
         return view('penumpang.show', compact('penumpang'));
     }
 
@@ -94,7 +89,6 @@ class PenumpangController extends Controller
      */
     public function edit(Penumpang $penumpang)
     {
-        $this->authorize('update', $penumpang);
         return view('penumpang.edit', compact('penumpang'));
     }
 
@@ -103,8 +97,6 @@ class PenumpangController extends Controller
      */
     public function update(UpdatePenumpangRequest $request, Penumpang $penumpang)
     {
-        $this->authorize('update', $penumpang);
-
         $data = $request->validated();
 
         $penumpang->update($data);
@@ -120,8 +112,6 @@ class PenumpangController extends Controller
      */
     public function destroy(Penumpang $penumpang)
     {
-        $this->authorize('delete', $penumpang);
-
         $penumpang->delete();
 
         $this->clearCaches();
@@ -135,8 +125,6 @@ class PenumpangController extends Controller
      */
     public function updateStatus(Request $request, Penumpang $penumpang)
     {
-        $this->authorize('update', $penumpang);
-
         $request->validate([
             'status' => 'required|boolean'
         ]);
@@ -160,11 +148,6 @@ class PenumpangController extends Controller
         $stats = Cache::remember(self::PENUMPANG_STATS_CACHE_KEY, self::CACHE_TTL, function () {
             $query = Penumpang::query();
 
-            // Filter by role
-            if (Auth::user()->role === 'user') {
-                $query->ownData(Auth::id());
-            }
-
             return [
                 'total_penumpang' => $query->count(),
                 'open_status' => $query->byStatus(true)->count(),
@@ -184,14 +167,8 @@ class PenumpangController extends Controller
     public function recent()
     {
         $recentPenumpang = Cache::remember(self::RECENT_PENUMPANG_CACHE_KEY, self::CACHE_TTL, function () {
-            $query = Penumpang::with('user:id,name')
-                ->select(['id', 'user_id', 'tujuan', 'tanggal', 'nopol', 'status', 'created_at'])
+            $query = Penumpang::select(['id', 'nama_penumpang', 'tujuan', 'tanggal', 'nopol', 'status', 'created_at'])
                 ->latest();
-
-            // Filter by role
-            if (Auth::user()->role === 'user') {
-                $query->ownData(Auth::id());
-            }
 
             return $query->take(5)->get();
         });
@@ -205,25 +182,19 @@ class PenumpangController extends Controller
     public function bulkUpdateStatus(Request $request)
     {
         $request->validate([
-            'penumpang_ids' => 'required|array',
-            'penumpang_ids.*' => 'integer|exists:penumpang,id',
+            'ids' => 'required|array',
+            'ids.*' => 'integer|exists:penumpang,id',
             'status' => 'required|boolean'
         ]);
 
-        $penumpangIds = $request->penumpang_ids;
+        $penumpangIds = $request->ids;
         $query = Penumpang::whereIn('id', $penumpangIds);
-
-        // Filter by role
-        if (Auth::user()->role === 'user') {
-            $query->ownData(Auth::id());
-        }
 
         $query->update(['status' => $request->status]);
 
         $this->clearCaches();
 
-        return redirect()->route('penumpang.index')
-            ->with('success', 'Status penumpang berhasil diperbarui sebanyak ' . count($penumpangIds) . ' data.');
+        return response()->json(['success' => true, 'message' => 'Status berhasil diperbarui untuk ' . count($penumpangIds) . ' item.']);
     }
 
     /**
@@ -233,13 +204,7 @@ class PenumpangController extends Controller
     {
         $format = $request->input('format', 'csv');
 
-        $query = Penumpang::with('user:id,name')
-            ->select(['id', 'user_id', 'usia', 'jenis_kelamin', 'tujuan', 'tanggal', 'nopol', 'jenis_kendaraan', 'status', 'created_at']);
-
-        // Filter by role
-        if (Auth::user()->role === 'user') {
-            $query->ownData(Auth::id());
-        }
+        $query = Penumpang::select(['id', 'nama_penumpang', 'usia', 'jenis_kelamin', 'tujuan', 'tanggal', 'nopol', 'jenis_kendaraan', 'status', 'created_at']);
 
         // Apply filters
         if ($request->filled('status')) {
@@ -272,7 +237,7 @@ class PenumpangController extends Controller
             // Data rows
             foreach ($penumpangs as $penumpang) {
                 fputcsv($file, [
-                    $penumpang->user->name,
+                    $penumpang->nama_penumpang,
                     $penumpang->usia,
                     $penumpang->jenis_kelamin_label,
                     $penumpang->tujuan,

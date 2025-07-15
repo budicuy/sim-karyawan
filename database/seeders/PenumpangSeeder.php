@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Penumpang;
-use App\Models\User;
 
 class PenumpangSeeder extends Seeder
 {
@@ -13,14 +12,6 @@ class PenumpangSeeder extends Seeder
      */
     public function run(): void
     {
-        // Ambil semua user yang ada
-        $users = User::all();
-
-        if ($users->isEmpty()) {
-            $this->command->error('Tidak ada user ditemukan. Jalankan UserSeeder terlebih dahulu.');
-            return;
-        }
-
         $jenisKendaraan = ['Bus', 'Minibus', 'Mobil', 'Motor', 'Truk'];
         $tujuanDestinasi = [
             'Jakarta',
@@ -43,13 +34,12 @@ class PenumpangSeeder extends Seeder
         $penumpangData = [];
 
         for ($i = 1; $i <= 50; $i++) {
-            $user = $users->random();
             $jenisKelamin = fake()->randomElement(['L', 'P']);
             $tanggal = fake()->dateTimeBetween('now', '+30 days');
             $kendaraan = fake()->randomElement($jenisKendaraan);
 
             $penumpangData[] = [
-                'user_id' => $user->id,
+                'nama_penumpang' => fake()->name(),
                 'usia' => fake()->numberBetween(16, 65),
                 'jenis_kelamin' => $jenisKelamin,
                 'tujuan' => fake()->randomElement($tujuanDestinasi),

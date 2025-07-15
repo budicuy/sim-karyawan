@@ -97,6 +97,7 @@
                                 <th class="py-3 px-4 text-left">Nama</th>
                                 <th class="py-3 px-4 text-left">Tujuan</th>
                                 <th class="py-3 px-4 text-left">Tanggal</th>
+                                <th class="py-3 px-4 text-left">Jam</th>
                                 <th class="py-3 px-4 text-left">Nopol</th>
                                 <th class="py-3 px-4 text-left">Jenis Kendaraan</th>
                                 <th class="py-3 px-4 text-left">Status</th>
@@ -106,9 +107,10 @@
                         <tbody class="text-gray-700">
                             @foreach ($recentPenumpang as $penumpang)
                                 <tr class="hover:bg-gray-50">
-                                    <td class="py-3 px-4 border-b">{{ $penumpang->user->name }}</td>
+                                    <td class="py-3 px-4 border-b">{{ $penumpang->nama_penumpang }}</td>
                                     <td class="py-3 px-4 border-b">{{ $penumpang->tujuan }}</td>
                                     <td class="py-3 px-4 border-b">{{ $penumpang->tanggal->format('d/m/Y') }}</td>
+                                    <td class="py-3 px-4 border-b">{{ $penumpang->tanggal->format('H:i') }}</td>
                                     <td class="py-3 px-4 border-b">{{ $penumpang->nopol }}</td>
                                     <td class="py-3 px-4 border-b">{{ $penumpang->jenis_kendaraan }}</td>
                                     <td class="py-3 px-4 border-b">
@@ -132,7 +134,7 @@
                     @foreach ($recentPenumpang as $penumpang)
                         <div class="bg-gray-50 rounded-lg p-4 border">
                             <div class="flex justify-between items-start mb-2">
-                                <h3 class="font-semibold text-gray-800">{{ $penumpang->user->name }}</h3>
+                                <h3 class="font-semibold text-gray-800">{{ $penumpang->nama_penumpang }}</h3>
                                 <span
                                     class="px-2 py-1 text-xs rounded-full {{ $penumpang->status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
                                     {{ $penumpang->status_label }}
@@ -146,6 +148,10 @@
                                 <div>
                                     <span class="font-medium">Tanggal:</span>
                                     <span class="text-gray-800">{{ $penumpang->tanggal->format('d/m/Y') }}</span>
+                                </div>
+                                <div>
+                                    <span class="font-medium">Jam:</span>
+                                    <span class="text-gray-800">{{ $penumpang->tanggal->format('H:i') }}</span>
                                 </div>
                                 <div>
                                     <span class="font-medium">Nopol:</span>
@@ -174,7 +180,6 @@
                         </svg>
                     </a>
                 </div>
-            </div>
             </div>
         @endcanany
 

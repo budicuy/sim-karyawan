@@ -13,7 +13,7 @@ class Penumpang extends Model
     protected $table = 'penumpang';
 
     protected $fillable = [
-        'user_id',
+        'nama_penumpang',
         'usia',
         'jenis_kelamin',
         'tujuan',
@@ -24,17 +24,9 @@ class Penumpang extends Model
     ];
 
     protected $casts = [
-        'tanggal' => 'date',
+        'tanggal' => 'datetime',
         'status' => 'boolean',
     ];
-
-    /**
-     * Relationship with User
-     */
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
 
     /**
      * Scope for filtering by status
@@ -49,7 +41,18 @@ class Penumpang extends Model
      */
     public function scopeByDateRange(Builder $query, $startDate, $endDate): Builder
     {
-        return $query->whereBetween('tanggal', [$startDate, $endDate]);
+        // Cast to date to ignore time part for date range filtering
+        return $query->whereDate('tanggal', '>=', $startDate)
+            ->whereDate('tanggal', '<=', $endDate);
+    }
+
+    /**
+     * Scope for filtering by time range
+     */
+    public function scopeByTimeRange(Builder $query, $startTime, $endTime): Builder
+    {
+        return $query->whereTime('tanggal', '>=', $startTime)
+            ->whereTime('tanggal', '<=', $endTime);
     }
 
     /**
@@ -58,21 +61,11 @@ class Penumpang extends Model
     public function scopeSearch(Builder $query, string $search): Builder
     {
         return $query->where(function ($q) use ($search) {
-            $q->where('tujuan', 'like', "%{$search}%")
+            $q->where('nama_penumpang', 'like', "%{$search}%")
+                ->orWhere('tujuan', 'like', "%{$search}%")
                 ->orWhere('nopol', 'like', "%{$search}%")
-                ->orWhere('jenis_kendaraan', 'like', "%{$search}%")
-                ->orWhereHas('user', function ($userQuery) use ($search) {
-                    $userQuery->where('name', 'like', "%{$search}%");
-                });
+                ->orWhere('jenis_kendaraan', 'like', "%{$search}%");
         });
-    }
-
-    /**
-     * Scope for user's own data
-     */
-    public function scopeOwnData(Builder $query, int $userId): Builder
-    {
-        return $query->where('user_id', $userId);
     }
 
     /**
