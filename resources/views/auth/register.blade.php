@@ -10,7 +10,7 @@
 <body class="font-sans antialiased">
     <x-layout>
         <div
-            class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 py-12 px-4 sm:px-6 lg:px-8">
+            class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-300 py-12 px-4 sm:px-6 lg:px-8">
             <div class="max-w-md w-full space-y-8">
                 <div>
                     <div class="mx-auto h-20 w-20 bg-blue-800 rounded-full flex items-center justify-center">
@@ -32,7 +32,7 @@
                 </div>
                 <form class="mt-8 space-y-6" method="POST" action="{{ route('register') }}">
                     @csrf
-                    <div class="rounded-md shadow-sm space-y-4">
+                    <div class="rounded-md p-10 bg-white shadow-sm space-y-4">
                         <div>
                             <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nama
                                 Lengkap</label>
