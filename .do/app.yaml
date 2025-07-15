@@ -48,7 +48,12 @@ services:
 
     # Perintah untuk menjalankan aplikasi setelah build selesai.
     run_command: |
-      # Menjalankan server Octane dengan FrankenPHP
+      # 1. KUNCI UTAMA: Pastikan headless Chrome tersedia di lingkungan RUNTIME.
+      #    Ini akan mengunduh Chrome jika belum ada di cache.
+      echo "Verifying/Installing headless Chrome for Puppeteer at runtime..."
+      pnpm exec puppeteer browsers install chrome-headless-shell
+
+      # 2. Jalankan server aplikasi.
       php artisan octane:start --server=frankenphp --host=0.0.0.0 --port=8080
 
     # Port HTTP yang diekspos oleh aplikasi Anda.
@@ -104,6 +109,10 @@ services:
       # Konfigurasi Puppeteer
       - key: PUPPETEER_CACHE_DIR
         value: "/workspace/.cache/puppeteer"
+      - key: PUPPETEER_EXECUTABLE_PATH
+        # Path eksplisit ke executable Chrome yang diinstal oleh Puppeteer.
+        # Ini adalah perbaikan paling penting untuk memastikan Browsershot menemukannya.
+        value: "/workspace/.cache/puppeteer/chrome-headless-shell/linux-138.0.7204.94/chrome-headless-shell"
 
       # Konfigurasi Vite
       - key: VITE_APP_NAME
