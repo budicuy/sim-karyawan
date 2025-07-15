@@ -26,15 +26,20 @@ class DashboardController extends Controller
             $penumpangQuery = Penumpang::query();
             $userQuery = User::query();
 
-            return [
+            $stats = [
                 'total_penumpang' => $penumpangQuery->clone()->count(),
-                'total_users'     => $userQuery->clone()->count(),
-                'admin_count'     => $userQuery->clone()->byRole('admin')->count(),
-                'manager_count'   => $userQuery->clone()->byRole('manager')->count(),
-                'user_count'      => $userQuery->clone()->byRole('user')->count(),
                 'open_status'     => $penumpangQuery->clone()->where('status', true)->count(),
                 'close_status'    => $penumpangQuery->clone()->where('status', false)->count(),
+                'today_penumpang' => $penumpangQuery->clone()->whereDate('tanggal', today())->count(),
             ];
+
+            // User stats should be available to all roles for display
+            $stats['total_users'] = $userQuery->clone()->count();
+            $stats['admin_count'] = $userQuery->clone()->byRole('admin')->count();
+            $stats['manager_count'] = $userQuery->clone()->byRole('manager')->count();
+            $stats['user_count'] = $userQuery->clone()->byRole('user')->count();
+
+            return $stats;
         });
     }
 
@@ -55,11 +60,11 @@ class DashboardController extends Controller
         });
 
         // Calculate percentages for progress bars
-        $totalUsers = $stats['total_users'];
+        $totalUsers = $stats['total_users'] ?? 0;
         $percentages = [
-            'admin' => $totalUsers > 0 ? round(($stats['admin_count'] / $totalUsers) * 100, 1) : 0,
-            'manager' => $totalUsers > 0 ? round(($stats['manager_count'] / $totalUsers) * 100, 1) : 0,
-            'user' => $totalUsers > 0 ? round(($stats['user_count'] / $totalUsers) * 100, 1) : 0,
+            'admin' => $totalUsers > 0 ? round(($stats['admin_count'] ?? 0 / $totalUsers) * 100, 1) : 0,
+            'manager' => $totalUsers > 0 ? round(($stats['manager_count'] ?? 0 / $totalUsers) * 100, 1) : 0,
+            'user' => $totalUsers > 0 ? round(($stats['user_count'] ?? 0 / $totalUsers) * 100, 1) : 0,
         ];
 
         return view('dashboard', compact('stats', 'recentPenumpang', 'percentages'));

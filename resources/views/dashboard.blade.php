@@ -105,7 +105,7 @@
                             </tr>
                         </thead>
                         <tbody class="text-gray-700">
-                            @foreach ($recentPenumpang as $penumpang)
+                            @forelse ($recentPenumpang as $penumpang)
                                 <tr class="hover:bg-gray-50">
                                     <td class="py-3 px-4 border-b">{{ $penumpang->nama_penumpang }}</td>
                                     <td class="py-3 px-4 border-b">{{ $penumpang->tujuan }}</td>
@@ -124,14 +124,20 @@
                                             class="text-blue-500 hover:underline mr-2">Edit</a>
                                     </td>
                                 </tr>
-                            @endforeach
+                            @empty
+                                <tr>
+                                    <td colspan="8" class="text-center py-4">
+                                        Tidak ada data penumpang terbaru.
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
 
                 <!-- Mobile View -->
                 <div class="md:hidden space-y-4">
-                    @foreach ($recentPenumpang as $penumpang)
+                    @forelse ($recentPenumpang as $penumpang)
                         <div class="bg-gray-50 rounded-lg p-4 border">
                             <div class="flex justify-between items-start mb-2">
                                 <h3 class="font-semibold text-gray-800">{{ $penumpang->nama_penumpang }}</h3>
@@ -167,7 +173,11 @@
                                     class="text-blue-500 hover:underline text-sm">Edit</a>
                             </div>
                         </div>
-                    @endforeach
+                    @empty
+                        <div class="text-center py-4">
+                            Tidak ada data penumpang terbaru.
+                        </div>
+                    @endforelse
                 </div>
                 <div class="mt-4">
                     <a href="{{ route('penumpang.index') }}" class="text-blue-500 hover:underline flex items-center">
@@ -184,7 +194,7 @@
         @endcanany
 
         <!-- System Overview -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 px-4 mb-5">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
             <!-- User Statistics -->
             <div class="bg-white rounded-lg shadow p-4 md:p-6">
                 <h2 class="text-lg md:text-xl font-bold mb-4 text-gray-800">Statistik User</h2>
@@ -200,41 +210,31 @@
 
                     <div class="flex items-center justify-between">
                         <span class="text-sm md:text-base text-gray-600">Manager</span>
-                        <span class="text-blue-800 font-semibold">{{ $stats['manager_count'] }}</span>
+                        <span class="text-green-600 font-semibold">{{ $stats['manager_count'] }}</span>
                     </div>
                     <div class="w-full bg-gray-200 rounded-full h-2.5">
-                        <div class="bg-blue-800 h-2.5 rounded-full" style="width: {{ $percentages['manager'] }}%">
+                        <div class="bg-green-600 h-2.5 rounded-full" style="width: {{ $percentages['manager'] }}%">
                         </div>
                     </div>
 
                     <div class="flex items-center justify-between">
                         <span class="text-sm md:text-base text-gray-600">User</span>
-                        <span class="text-blue-800 font-semibold">{{ $stats['user_count'] }}</span>
+                        <span class="text-yellow-500 font-semibold">{{ $stats['user_count'] }}</span>
                     </div>
                     <div class="w-full bg-gray-200 rounded-full h-2.5">
-                        <div class="bg-blue-800 h-2.5 rounded-full" style="width: {{ $percentages['user'] }}%"></div>
+                        <div class="bg-yellow-500 h-2.5 rounded-full" style="width: {{ $percentages['user'] }}%">
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Quick Actions -->
+            <!-- Placeholder for another chart or info -->
             <div class="bg-white rounded-lg shadow p-4 md:p-6">
-                <h2 class="text-lg md:text-xl font-bold mb-4 text-gray-800">Aksi Cepat</h2>
-                <div class="space-y-3">
-                    <a href="{{ route('penumpang.create') }}"
-                        class="block w-full bg-blue-800 text-white py-2 px-4 rounded hover:bg-blue-900 transition text-center text-sm md:text-base">
-                        Tambah Data Penumpang
-                    </a>
-                    @can('admin')
-                        <a href="{{ route('users.create') }}"
-                            class="block w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition text-center text-sm md:text-base">
-                            Tambah User Baru
-                        </a>
-                    @endcan
-                    <a href="{{ route('penumpang.index') }}"
-                        class="block w-full bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700 transition text-center text-sm md:text-base">
-                        Lihat Semua Data Penumpang
-                    </a>
+                <h2 class="text-lg md:text-xl font-bold mb-4 text-gray-800">Informasi Sistem</h2>
+                <div class="text-center text-gray-500 mt-10">
+                    <p>Versi Aplikasi: 1.0.0</p>
+                    <p>Lingkungan: {{ app()->environment() }}</p>
+                    <p>Status Cache: <span class="text-green-500 font-semibold">Aktif</span></p>
                 </div>
             </div>
         </div>

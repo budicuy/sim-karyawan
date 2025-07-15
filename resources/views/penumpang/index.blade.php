@@ -30,6 +30,10 @@
                         class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition text-center text-sm">
                         Export CSV
                     </a>
+                    <a href="{{ route('penumpang.export', array_merge(request()->query(), ['format' => 'pdf'])) }}"
+                        class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition text-center text-sm">
+                        Export PDF
+                    </a>
                     <a href="{{ route('penumpang.create') }}"
                         class="bg-blue-800 text-white px-4 py-2 rounded-md hover:bg-blue-900 transition text-center text-sm">
                         Tambah Penumpang
@@ -128,17 +132,17 @@
                                     <input type="checkbox" @click="toggleAll()"
                                         class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
                                 </th>
-                                <th class="py-3 px-4 text-left">Nama Penumpang</th>
-                                <th class="py-3 px-4 text-left">Usia</th>
-                                <th class="py-3 px-4 text-left">Jenis Kelamin</th>
-                                <th class="py-3 px-4 text-left">Tujuan</th>
-                                <th class="py-3 px-4 text-left">Tanggal</th>
-                                <th class="py-3 px-4 text-left">Jam</th>
-                                <th class="py-3 px-4 text-left">Nopol</th>
-                                <th class="py-3 px-4 text-left">Jenis Kendaraan</th>
-                                <th class="py-3 px-4 text-left">Status</th>
-                                <th class="py-3 px-4 text-center">Aksi</th>
                             @endcanany
+                            <th class="py-3 px-4 text-left">Nama Penumpang</th>
+                            <th class="py-3 px-4 text-left">Usia</th>
+                            <th class="py-3 px-4 text-left">Jenis Kelamin</th>
+                            <th class="py-3 px-4 text-left">Tujuan</th>
+                            <th class="py-3 px-4 text-left">Tanggal</th>
+                            <th class="py-3 px-4 text-left">Jam</th>
+                            <th class="py-3 px-4 text-left">Nopol</th>
+                            <th class="py-3 px-4 text-left">Jenis Kendaraan</th>
+                            <th class="py-3 px-4 text-left">Status</th>
+                            <th class="py-3 px-4 text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="text-gray-700">
@@ -166,28 +170,26 @@
                                     </span>
                                 </td>
                                 <td class="py-3 px-4 border-b">
-                                    <div class="flex space-x-3">
-                                        <button>
-                                            <a href="{{ route('penumpang.show', $penumpang) }}"
-                                                class="text-blue-500 hover:underline text-sm">Lihat</a>
-                                        </button>
-                                        <button>
+                                    <div class="flex justify-center space-x-3">
+                                        <a href="{{ route('penumpang.show', $penumpang) }}"
+                                            class="text-blue-500 hover:underline text-sm">Lihat</a>
+                                        @canany(['admin', 'manager'])
                                             <a href="{{ route('penumpang.edit', $penumpang) }}"
                                                 class="text-yellow-500 hover:underline text-sm">Edit</a>
-                                        </button>
-                                        <form method="POST" action="{{ route('penumpang.destroy', $penumpang) }}"
-                                            class="inline" onsubmit="return confirm('Yakin ingin menghapus?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                                class="text-red-500 hover:underline text-sm">Hapus</button>
-                                        </form>
+                                            <form method="POST" action="{{ route('penumpang.destroy', $penumpang) }}"
+                                                class="inline" onsubmit="return confirm('Yakin ingin menghapus?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                    class="text-red-500 hover:underline text-sm">Hapus</button>
+                                            </form>
+                                        @endcanany
                                     </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="10" class="py-3 px-4 text-center text-gray-500">
+                                <td colspan="11" class="py-3 px-4 text-center text-gray-500">
                                     Tidak ada data penumpang.
                                 </td>
                             </tr>
@@ -246,26 +248,24 @@
                             </div>
                         </div>
 
-                        <div class="flex flex-nowrap items-center  gap-4 pt-3 border-t">
-                            <button>
-                                <a href="{{ route('penumpang.show', $penumpang) }}"
-                                    class="text-blue-500 hover:underline text-sm">Lihat</a>
-                            </button>
-                            <button>
+                        <div class="flex justify-end space-x-3 mt-3 pt-3 border-t">
+                            <a href="{{ route('penumpang.show', $penumpang) }}"
+                                class="text-blue-500 hover:underline text-sm">Lihat</a>
+                            @canany(['admin', 'manager'])
                                 <a href="{{ route('penumpang.edit', $penumpang) }}"
                                     class="text-yellow-500 hover:underline text-sm">Edit</a>
-                            </button>
-                            <form method="POST" action="{{ route('penumpang.destroy', $penumpang) }}"
-                                class="inline" onsubmit="return confirm('Yakin ingin menghapus?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-500 hover:underline text-sm">Hapus</button>
-                            </form>
+                                <form method="POST" action="{{ route('penumpang.destroy', $penumpang) }}"
+                                    class="inline" onsubmit="return confirm('Yakin ingin menghapus?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-500 hover:underline text-sm">Hapus</button>
+                                </form>
+                            @endcanany
                         </div>
                     </div>
                 @empty
-                    <div class="text-center py-8">
-                        <p class="text-gray-500">Tidak ada data penumpang yang ditemukan.</p>
+                    <div class="bg-white p-4 rounded-lg shadow text-center text-gray-500">
+                        Tidak ada data penumpang.
                     </div>
                 @endforelse
             </div>

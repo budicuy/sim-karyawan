@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Spatie\LaravelPdf\Facades\Pdf;
 
 class PenumpangController extends Controller
 {
@@ -227,6 +228,34 @@ class PenumpangController extends Controller
 
         if ($format === 'json') {
             return response()->json($penumpangs);
+        }
+
+        // PDF export
+        if ($format === 'pdf') {
+            $filters = [
+                'search' => $request->search,
+                'status' => $request->status,
+                'date_from' => $request->date_from,
+                'date_to' => $request->date_to,
+                'time_from' => $request->time_from,
+                'time_to' => $request->time_to,
+            ];
+
+            $hasFilters = !empty($filters['search']) || $filters['status'] !== '' ||
+                !empty($filters['date_from']) || !empty($filters['date_to']) ||
+                !empty($filters['time_from']) || !empty($filters['time_to']);
+
+            $pdf = Pdf::view('penumpang.pdf', [
+                'penumpangs' => $penumpangs,
+                'filters' => $filters,
+                'hasFilters' => $hasFilters
+            ])
+                ->format('A4')
+                ->margins(10, 10, 10, 10);
+
+            $filename = 'manifes_penumpang_' . date('Y-m-d_H-i-s') . '.pdf';
+
+            return $pdf->download($filename);
         }
 
         // CSV export
