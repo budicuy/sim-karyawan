@@ -196,9 +196,13 @@ class PenumpangController extends Controller
 
         // PDF export using dompdf
         if ($format === 'pdf') {
+            // Increase memory and execution time for large datasets
+            ini_set('memory_limit', '512M');
+            ini_set('max_execution_time', 300);
+
             $pdf = Pdf::loadView('penumpang.pdf', ['penumpangs' => $penumpangs]);
 
-            $filename = 'Manifes_Penumpang_' . date('Y-m-d') . '.pdf';
+            $filename = 'manifes_penumpang_' . date('Y-m-d_H-i-s') . '.pdf';
 
             return $pdf->download($filename);
         }
