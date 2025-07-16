@@ -1,83 +1,103 @@
-name: data-penumpang
-region: nyc3 # Ganti dengan region pilihan Anda, misal: sgp1
+name: sim-karyawan
+region: sgp
+
+# Konfigurasi notifikasi
+alerts:
+  - rule: DEPLOYMENT_FAILED
+  - rule: DOMAIN_FAILED
 
 # Database Service
 databases:
-  - name: db-karyawan
-    engine: PG # Menggunakan PostgreSQL
-    version: "16"
-    production: true
+  - engine: PG
+    name: db-karyawan
+    version: "14"
 
 # Application Services
 services:
-  - name: app
+  - name: sim-karyawan
+    # Menggunakan Dockerfile untuk build kustom
     dockerfile_path: .do/Dockerfile
-    source_dir: .
     github:
-      repo: # Ganti dengan repo Anda, misal: budicuy/sim-karyawan
+      repo: budicuy/sim-karyawan
       branch: main
       deploy_on_push: true
-
-    # Perintah untuk menjalankan FrankenPHP melalui Octane
+    # Port yang diekspos oleh aplikasi
+    http_port: 8080
+    # Ukuran instance
+    instance_count: 1
+    instance_size_slug: apps-s-1vcpu-0.5gb
+    # Perintah untuk menjalankan Octane dengan FrankenPHP
     run_command: php artisan octane:start --server=frankenphp --host=0.0.0.0 --port=8080
+    source_dir: /
 
     # Environment Variables
     envs:
       - key: APP_NAME
+        scope: RUN_AND_BUILD_TIME
         value: "Laravel"
       - key: APP_ENV
+        scope: RUN_AND_BUILD_TIME
         value: "production"
       - key: APP_KEY
+        scope: RUN_AND_BUILD_TIME
         value: "base64:2wedmS/bvizTAgo5WP/fHKWHC+Uy/lQZdpEvbKCoLZ8="
         type: SECRET
       - key: APP_DEBUG
+        scope: RUN_AND_BUILD_TIME
         value: "false"
       - key: APP_URL
+        scope: RUN_AND_BUILD_TIME
         value: "${APP_URL}"
       - key: APP_LOCALE
+        scope: RUN_AND_BUILD_TIME
         value: "id"
-      - key: APP_FALLBACK_LOCALE
-        value: "id"
-      - key: APP_FAKER_LOCALE
-        value: "id_ID"
       - key: LOG_CHANNEL
+        scope: RUN_TIME
         value: "stderr"
+      - key: LOG_LEVEL
+        scope: RUN_TIME
+        value: "info"
       - key: DB_CONNECTION
+        scope: RUN_TIME
         value: "pgsql"
-      - key: DB_URL
-        value: "${db-karyawan.DATABASE_URL}"
       - key: DB_HOST
+        scope: RUN_TIME
         value: "${db-karyawan.HOSTNAME}"
       - key: DB_PORT
+        scope: RUN_TIME
         value: "${db-karyawan.PORT}"
       - key: DB_DATABASE
+        scope: RUN_TIME
         value: "${db-karyawan.DATABASE}"
       - key: DB_USERNAME
+        scope: RUN_TIME
         value: "${db-karyawan.USERNAME}"
       - key: DB_PASSWORD
+        scope: RUN_TIME
         value: "${db-karyawan.PASSWORD}"
         type: SECRET
       - key: SESSION_DRIVER
+        scope: RUN_TIME
         value: "database"
       - key: QUEUE_CONNECTION
+        scope: RUN_TIME
         value: "database"
       - key: CACHE_STORE
+        scope: RUN_TIME
         value: "database"
-      - key: MAIL_MAILER
-        value: "log"
       - key: VITE_APP_NAME
+        scope: RUN_AND_BUILD_TIME
         value: "${APP_NAME}"
-      # Path untuk Spatie/Browsershot jika masih digunakan
+      # Path untuk Spatie/Browsershot
       - key: BROWSERSHOT_PUPPETEER_EXECUTABLE_PATH
+        scope: RUN_TIME
         value: "/usr/bin/google-chrome-stable"
 
-    # HTTP Port
-    http_port: 8080
-
-    # Health Check
-    health_check:
-      http_path: /up
-
-    # Routes
-    routes:
-      - path: /
+# Konfigurasi Ingress
+ingress:
+  rules:
+    - component:
+        name: sim-karyawan
+      match:
+        path:
+          prefix: /

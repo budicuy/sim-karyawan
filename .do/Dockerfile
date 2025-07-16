@@ -1,50 +1,89 @@
-# Base image FrankenPHP
+# Gunakan base image resmi FrankenPHP untuk Laravel
 FROM dunglas/frankenphp:1-php8.3-laravel
 
-# Install system dependencies
-# Termasuk dependensi untuk pgsql dan dependensi untuk Puppeteer/Browsershot
-RUN apt-get update && apt-get install -y \
+# Set variabel lingkungan untuk instalasi non-interaktif
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install dependensi sistem yang diperlukan
+# - libpq-dev: untuk ekstensi PHP pgsql
+# - wget, gnupg: untuk menambahkan repositori Chrome
+# - Kumpulan library untuk menjalankan headless Chrome (Puppeteer)
+RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev \
     libzip-dev \
     zip \
     unzip \
-    # Dependencies for Puppeteer/Browsershot
-    && apt-get install -y --no-install-recommends \
-    libx11-xcb1 libxrandr2 libxcomposite1 libxcursor1 libxdamage1 libxi6 libxtst6 libnss3 libcups2 libxss1 libasound2 libatk1.0-0 libatk-bridge2.0-0 libpangocairo-1.0-0 libgtk-3-0 \
+    wget \
+    gnupg \
+    # Dependensi untuk Puppeteer/Browsershot
+    ca-certificates \
+    fonts-liberation \
+    libasound2 \
+    libatk-bridge2.0-0 \
+    libatk1.0-0 \
+    libc6 \
+    libcairo2 \
+    libcups2 \
+    libdbus-1-3 \
+    libexpat1 \
+    libfontconfig1 \
+    libgbm1 \
+    libgcc1 \
+    libglib2.0-0 \
+    libgtk-3-0 \
+    libnspr4 \
+    libnss3 \
+    libpango-1.0-0 \
+    libpangocairo-1.0-0 \
+    libstdc++6 \
+    libx11-6 \
+    libx11-xcb1 \
+    libxcb1 \
+    libxcomposite1 \
+    libxcursor1 \
+    libxdamage1 \
+    libxext6 \
+    libxfixes3 \
+    libxi6 \
+    libxrandr2 \
+    libxrender1 \
+    libxss1 \
+    libxtst6 \
+    lsb-release \
+    xdg-utils \
     && rm -rf /var/lib/apt/lists/*
 
-# Install PHP extensions
+# Install Google Chrome
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list \
+    && apt-get update \
+    && apt-get install -y google-chrome-stable \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install ekstensi PHP
 RUN docker-php-ext-install pdo_pgsql zip
 
-# Install Node.js and npm
-RUN curl -sL https://deb.nodesource.com/setup_20.x | bash -
+# Install Node.js dan pnpm
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
 RUN apt-get install -y nodejs
+RUN npm install -g pnpm
 
-# Install Google Chrome for Puppeteer
-RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
-    apt-get install -y ./google-chrome-stable_current_amd64.deb && \
-    rm google-chrome-stable_current_amd64.deb
-
-# Set working directory
+# Set direktori kerja
 WORKDIR /app
 
-# Copy application files
+# Salin file proyek
 COPY . .
 
-# Install Composer dependencies
-# Pastikan laravel/octane sudah ada di composer.json
+# Install dependensi Composer
 RUN composer install --no-dev --optimize-autoloader
 
-# Install NPM dependencies and build assets
-RUN npm install
-RUN npm run build
+# Install dependensi NPM dan build aset
+RUN pnpm install
+RUN pnpm run build
 
-# Set permissions
+# Atur izin folder
 RUN chown -R www-data:www-data storage bootstrap/cache
 RUN chmod -R 775 storage bootstrap/cache
 
-# Expose port (FrankenPHP default)
+# Expose port (akan digunakan oleh run_command di app.yaml)
 EXPOSE 8080
-
-# Perintah run akan di-handle oleh app.yaml
-# CMD ["php", "artisan", "octane:start", "--server=frankenphp", "--host=0.0.0.0", "--port=8080"]
