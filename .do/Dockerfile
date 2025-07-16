@@ -1,5 +1,5 @@
 # Gunakan base image resmi FrankenPHP untuk Laravel
-FROM dunglas/frankenphp:1-php8.3-laravel
+FROM dunglas/frankenphp:latest-php8.3-laravel
 
 # Set variabel lingkungan untuk instalasi non-interaktif
 ENV DEBIAN_FRONTEND=noninteractive
