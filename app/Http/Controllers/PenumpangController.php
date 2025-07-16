@@ -6,17 +6,11 @@ use App\Models\Penumpang;
 use App\Http\Requests\StorePenumpangRequest;
 use App\Http\Requests\UpdatePenumpangRequest;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Barryvdh\DomPDF\Facade\Pdf;
+use Spatie\LaravelPdf\Facades\Pdf;
 
 class PenumpangController extends Controller
 {
-    use AuthorizesRequests;
-
     /**
      * Cache keys untuk penumpang
      */
@@ -194,17 +188,11 @@ class PenumpangController extends Controller
             return response()->json($penumpangs);
         }
 
-        // PDF export using dompdf
+        // PDF export using Spatie PDF
         if ($format === 'pdf') {
-            // Increase memory and execution time for large datasets
-            ini_set('memory_limit', '512M');
-            ini_set('max_execution_time', 300);
-
-            $pdf = Pdf::loadView('penumpang.pdf', ['penumpangs' => $penumpangs]);
-
-            $filename = 'manifes_penumpang_' . date('Y-m-d_H-i-s') . '.pdf';
-
-            return $pdf->download($filename);
+            return Pdf::view('penumpang.pdf', ['penumpangs' => $penumpangs])
+                ->format('A4')
+                ->download('manifes_penumpang_' . date('Y-m-d_H-i-s') . '.pdf');
         }
 
         // CSV export

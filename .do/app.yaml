@@ -1,0 +1,83 @@
+name: data-penumpang
+region: nyc3 # Ganti dengan region pilihan Anda, misal: sgp1
+
+# Database Service
+databases:
+  - name: db-karyawan
+    engine: PG # Menggunakan PostgreSQL
+    version: "16"
+    production: true
+
+# Application Services
+services:
+  - name: app
+    dockerfile_path: .do/Dockerfile
+    source_dir: .
+    github:
+      repo: # Ganti dengan repo Anda, misal: budicuy/sim-karyawan
+      branch: main
+      deploy_on_push: true
+
+    # Perintah untuk menjalankan FrankenPHP melalui Octane
+    run_command: php artisan octane:start --server=frankenphp --host=0.0.0.0 --port=8080
+
+    # Environment Variables
+    envs:
+      - key: APP_NAME
+        value: "Laravel"
+      - key: APP_ENV
+        value: "production"
+      - key: APP_KEY
+        value: "base64:2wedmS/bvizTAgo5WP/fHKWHC+Uy/lQZdpEvbKCoLZ8="
+        type: SECRET
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_URL
+        value: "${APP_URL}"
+      - key: APP_LOCALE
+        value: "id"
+      - key: APP_FALLBACK_LOCALE
+        value: "id"
+      - key: APP_FAKER_LOCALE
+        value: "id_ID"
+      - key: LOG_CHANNEL
+        value: "stderr"
+      - key: DB_CONNECTION
+        value: "pgsql"
+      - key: DB_URL
+        value: "${db-karyawan.DATABASE_URL}"
+      - key: DB_HOST
+        value: "${db-karyawan.HOSTNAME}"
+      - key: DB_PORT
+        value: "${db-karyawan.PORT}"
+      - key: DB_DATABASE
+        value: "${db-karyawan.DATABASE}"
+      - key: DB_USERNAME
+        value: "${db-karyawan.USERNAME}"
+      - key: DB_PASSWORD
+        value: "${db-karyawan.PASSWORD}"
+        type: SECRET
+      - key: SESSION_DRIVER
+        value: "database"
+      - key: QUEUE_CONNECTION
+        value: "database"
+      - key: CACHE_STORE
+        value: "database"
+      - key: MAIL_MAILER
+        value: "log"
+      - key: VITE_APP_NAME
+        value: "${APP_NAME}"
+      # Path untuk Spatie/Browsershot jika masih digunakan
+      - key: BROWSERSHOT_PUPPETEER_EXECUTABLE_PATH
+        value: "/usr/bin/google-chrome-stable"
+
+    # HTTP Port
+    http_port: 8080
+
+    # Health Check
+    health_check:
+      http_path: /up
+
+    # Routes
+    routes:
+      - path: /
